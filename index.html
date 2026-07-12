@@ -449,7 +449,7 @@
                     </div>
                     <div class="field">
                         <label for="tujuan">Tujuan Fitness</label>
-                        <select id="tujuan" name="tujuan">
+                        <select id="tujuan" name="tujuan" required>
                             <option value="" disabled selected>Pilih Tujuan</option>
                             <option value="Menurunkan Berat Badan">Menurunkan Berat Badan</option>
                             <option value="Meningkatkan Massa Otot">Meningkatkan Massa Otot</option>
@@ -460,7 +460,7 @@
                     </div>
                     <div class="field">
                         <label for="alamat">Alamat</label>
-                        <textarea id="alamat" name="alamat" placeholder="Alamat lengkap"></textarea>
+                        <textarea id="alamat" name="alamat" placeholder="Alamat lengkap" required></textarea>
                     </div>
                     <button type="submit" class="cta">Daftar Sekarang</button>
                     <div class="hint">Dengan mendaftar, kamu setuju dengan syarat & ketentuan layanan gym.</div>
@@ -658,7 +658,27 @@
     document.getElementById('regForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(this));
-        if (!data.membership) return alert('Pilih paket membership!');
+
+        const wajib = [
+            ['nama', 'Nama Lengkap'],
+            ['tglLahir', 'Tanggal Lahir'],
+            ['email', 'Email'],
+            ['telepon', 'No. Telepon'],
+            ['gender', 'Jenis Kelamin'],
+            ['membership', 'Paket Membership'],
+            ['tujuan', 'Tujuan Fitness'],
+            ['alamat', 'Alamat'],
+        ];
+        for (const [key, label] of wajib) {
+            if (!data[key] || String(data[key]).trim() === '') {
+                alert('Mohon lengkapi: ' + label);
+                return;
+            }
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+            alert('Format email tidak valid');
+            return;
+        }
 
         const planLabel = plans[data.membership] ? plans[data.membership].label : data.membership;
         const msg =
@@ -669,8 +689,8 @@ Email: ${data.email}
 Telepon: ${data.telepon}
 Gender: ${data.gender}
 Paket: ${planLabel}
-Tujuan: ${data.tujuan || '-'}
-Alamat: ${data.alamat || '-'}`;
+Tujuan: ${data.tujuan}
+Alamat: ${data.alamat}`;
 
         window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 
