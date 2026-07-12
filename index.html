@@ -234,38 +234,6 @@
         }
         .badge.ok { color: var(--ok); border-color: #163129; background: #0b1f18; }
 
-        /* ===== MEMBER TABLE ===== */
-        .table-wrap { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { text-align: left; padding: 12px 10px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        td { padding: 12px 10px; border-bottom: 1px solid var(--border); }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-        .badge-status {
-            display: inline-block; padding: 3px 10px; border-radius: 999px;
-            font-size: 11px; font-weight: 600;
-        }
-        .badge-status.active { background: #0b1f18; color: var(--ok); border: 1px solid #163129; }
-        .btn-sm {
-            padding: 6px 12px; border: none; border-radius: 8px;
-            font-size: 12px; font-weight: 600; cursor: pointer;
-            font-family: var(--font); transition: .1s;
-        }
-        .btn-sm.danger { background: #2a1515; color: var(--accent); border: 1px solid #3f2020; }
-        .btn-sm.danger:hover { background: #3f2020; }
-        .btn-sm.warning { background: #1f1f10; color: var(--warn); border: 1px solid #3f3f10; }
-        .btn-sm.warning:hover { background: #2f2f10; }
-        .search-bar {
-            display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
-        }
-        .search-bar input {
-            flex: 1; min-width: 200px; background: var(--panel-2);
-            border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px;
-            color: var(--text); font-size: 14px; outline: none; font-family: var(--font);
-        }
-        .search-bar input::placeholder { color: #6b6f78; }
-        .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
-        .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
-
         /* ===== SCHEDULE ===== */
         .schedule-grid {
             display: grid;
@@ -390,7 +358,6 @@
     <div class="nav-links">
         <button class="active" data-tab="home">Beranda</button>
         <button data-tab="daftar">Daftar</button>
-        <button data-tab="member">Member</button>
         <button data-tab="jadwal">Jadwal</button>
         <button data-tab="trainer">Trainer</button>
         <button data-tab="harga">Harga</button>
@@ -546,39 +513,6 @@
                     <span class="badge ok">✔ Diskon 20% bulan pertama</span>
                     <span class="badge">✔ Free gym tour</span>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== MEMBER ==================== -->
-    <section class="section" id="tab-member">
-        <div class="section-title">Data Member</div>
-        <div class="section-sub">Semua member yang terdaftar</div>
-
-        <div class="panel">
-            <div class="search-bar">
-                <input type="text" id="searchMember" placeholder="Cari nama member..." oninput="renderMembers()">
-                <button class="btn-sm warning" onclick="clearAllMembers()">Hapus Semua</button>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>Telepon</th>
-                            <th>Paket</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="memberBody"></tbody>
-                </table>
-            </div>
-            <div class="empty-state" id="emptyState">
-                <div class="icon">📋</div>
-                <p>Belum ada member terdaftar.</p>
             </div>
         </div>
     </section>
@@ -824,22 +758,12 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'ironfit_members';
     const plans = {
         basic: { label: 'Basic', price: 'Rp 200.000/bulan', promo: 'Diskon 20%', total: 'Rp 160.000' },
         premium: { label: 'Premium', price: 'Rp 350.000/bulan', promo: 'Diskon 20%', total: 'Rp 280.000' },
         vip: { label: 'VIP', price: 'Rp 500.000/bulan', promo: 'Diskon 20%', total: 'Rp 400.000' },
         tahunan: { label: 'Tahunan', price: 'Rp 2.000.000/tahun', promo: 'Diskon 20%', total: 'Rp 1.600.000' },
     };
-
-    function getMembers() {
-        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-        catch { return []; }
-    }
-
-    function saveMembers(members) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
-    }
 
     // Tab switching
     document.querySelectorAll('[data-tab]').forEach(btn => {
@@ -853,7 +777,6 @@
         const btn = document.querySelector(`[data-tab="${tab}"]`);
         if (section) section.classList.add('active');
         if (btn) btn.classList.add('active');
-        if (tab === 'member') renderMembers();
     }
 
     // Form
@@ -870,23 +793,6 @@
         const data = Object.fromEntries(new FormData(this));
         if (!data.membership) return alert('Pilih paket membership!');
 
-        const members = getMembers();
-        const newMember = {
-            id: Date.now(),
-            nama: data.nama,
-            email: data.email,
-            telepon: data.telepon,
-            tglLahir: data.tglLahir,
-            gender: data.gender,
-            membership: data.membership,
-            tujuan: data.tujuan || '-',
-            alamat: data.alamat || '-',
-            status: 'Aktif',
-            createdAt: new Date().toLocaleString('id-ID'),
-        };
-        members.push(newMember);
-        saveMembers(members);
-
         this.style.display = 'none';
         document.getElementById('formPanel').querySelector('h2').style.display = 'none';
         document.getElementById('successState').classList.add('show');
@@ -900,54 +806,7 @@
         updateSummary();
     }
 
-    // Member table
-    function renderMembers() {
-        const tbody = document.getElementById('memberBody');
-        const empty = document.getElementById('emptyState');
-        const search = document.getElementById('searchMember').value.toLowerCase();
-        const members = getMembers();
 
-        const filtered = members.filter(m => m.nama.toLowerCase().includes(search));
-        tbody.innerHTML = '';
-
-        if (filtered.length === 0) {
-            tbody.innerHTML = '';
-            empty.style.display = 'block';
-            return;
-        }
-        empty.style.display = 'none';
-
-        filtered.forEach((m, i) => {
-            const planLabel = plans[m.membership] ? plans[m.membership].label : m.membership;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${i + 1}</td>
-                <td><strong>${m.nama}</strong></td>
-                <td>${m.email}</td>
-                <td>${m.telepon}</td>
-                <td>${planLabel}</td>
-                <td><span class="badge-status active">${m.status}</span></td>
-                <td>
-                    <button class="btn-sm danger" onclick="deleteMember(${m.id})">Hapus</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function deleteMember(id) {
-        if (!confirm('Hapus member ini?')) return;
-        let members = getMembers();
-        members = members.filter(m => m.id !== id);
-        saveMembers(members);
-        renderMembers();
-    }
-
-    function clearAllMembers() {
-        if (!confirm('Hapus semua data member?')) return;
-        saveMembers([]);
-        renderMembers();
-    }
 </script>
 
 </body>
