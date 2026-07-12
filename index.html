@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IronFit Gym</title>
+    <meta name="description" content="IronFit Gym — gym di Jakarta Pusat dengan paket Harian Rp12.000, Mingguan Rp45.000, dan Bulanan Rp120.000. Buka 07.00-21.00, alat lengkap, trainer profesional, free isi ulang air mineral.">
+    <meta property="og:title" content="IronFit Gym">
+    <meta property="og:description" content="Gym Jakarta Pusat: Harian Rp12rb, Mingguan Rp45rb, Bulanan Rp120rb. Alat lengkap, trainer profesional, free isi ulang air mineral.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -463,8 +468,8 @@
 
                 <div class="success" id="successState">
                     <div class="icon">✅</div>
-                    <h3>Pendaftaran Berhasil</h3>
-                    <p>Terima kasih! Data kamu sudah tersimpan. Tim kami akan menghubungimu untuk verifikasi.</p>
+                    <h3>Pendaftaran Dikirim</h3>
+                    <p>Pesan WhatsApp sudah kami buatkan. Klik tombol kirim di WhatsApp untuk konfirmasi pendaftaranmu.</p>
                     <button class="cta" style="margin-top:14px" onclick="resetForm()">Daftar Lagi</button>
                 </div>
             </div>
@@ -606,13 +611,13 @@
             </div>
             <div class="panel">
                 <h2>Lokasi</h2>
-                <div class="map-placeholder">
+                <a class="map-placeholder" href="https://www.google.com/maps/search/?api=1&query=Jl.%20Merdeka%20No.%20123,%20Jakarta%20Pusat" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
                     <div style="text-align:center">
                         <div style="font-size:40px; margin-bottom:8px;">🗺️</div>
-                        <p>Peta Google Maps akan tampil di sini</p>
+                        <p>Klik untuk buka di Google Maps</p>
                         <p style="font-size:12px; margin-top:6px;">Jl. Merdeka No. 123, Jakarta Pusat</p>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </section>
@@ -648,10 +653,26 @@
         document.getElementById('s-total').textContent = plan ? plan.total : '-';
     }
 
+    const WA_NUMBER = '6281234567890';
+
     document.getElementById('regForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(this));
         if (!data.membership) return alert('Pilih paket membership!');
+
+        const planLabel = plans[data.membership] ? plans[data.membership].label : data.membership;
+        const msg =
+`Halo IronFit 👋, saya mau daftar member:
+Nama: ${data.nama}
+Tanggal Lahir: ${data.tglLahir}
+Email: ${data.email}
+Telepon: ${data.telepon}
+Gender: ${data.gender}
+Paket: ${planLabel}
+Tujuan: ${data.tujuan || '-'}
+Alamat: ${data.alamat || '-'}`;
+
+        window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 
         this.style.display = 'none';
         document.getElementById('formPanel').querySelector('h2').style.display = 'none';
