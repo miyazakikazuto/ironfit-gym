@@ -645,10 +645,13 @@
         }
 
         const planLabel = plans[data.membership] ? plans[data.membership].label : data.membership;
+        const tglRaw = data.tglLahir || '';
+        const tglParts = tglRaw.split('-');
+        const tglFormatted = tglParts.length === 3 ? `${tglParts[2]}/${tglParts[1]}/${tglParts[0]}` : tglRaw;
         const msg =
 `Halo IronFit, saya mau daftar member:
 Nama: ${data.nama}
-Tanggal Lahir: ${data.tglLahir}
+Tanggal Lahir: ${tglFormatted}
 Gender: ${data.gender}
 Paket: ${planLabel}
 Alamat: ${data.alamat}`;
