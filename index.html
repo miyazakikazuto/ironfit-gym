@@ -470,10 +470,9 @@
                         <label for="membership">Pilih Membership</label>
                         <select id="membership" name="membership" onchange="updateSummary()" required>
                             <option value="" disabled selected>Pilih Paket</option>
-                            <option value="basic">Basic - Rp 200.000/bulan</option>
-                            <option value="premium">Premium - Rp 350.000/bulan</option>
-                            <option value="vip">VIP - Rp 500.000/bulan</option>
-                            <option value="tahunan">Tahunan - Rp 2.000.000/tahun</option>
+                            <option value="harian">Harian - Rp 12.000/hari</option>
+                            <option value="mingguan">Mingguan - Rp 45.000/7 hari</option>
+                            <option value="bulanan">Bulanan - Rp 120.000/bulan</option>
                         </select>
                     </div>
                     <div class="field">
@@ -507,12 +506,7 @@
                 <h2>Ringkasan</h2>
                 <div class="price-summary">
                     <div class="price-row"><span>Paket</span><span id="s-plan">-</span></div>
-                    <div class="price-row"><span>Promo</span><span id="s-promo">-</span></div>
                     <div class="price-row total"><span>Total</span><span id="s-total">-</span></div>
-                </div>
-                <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;">
-                    <span class="badge ok">✔ Diskon 20% bulan pertama</span>
-                    <span class="badge">✔ Free gym tour</span>
                 </div>
             </div>
         </div>
@@ -634,56 +628,37 @@
 
         <div class="pricing-grid">
             <div class="pricing-card">
-                <h3>Basic</h3>
-                <div class="price">Rp 200.000</div>
-                <div class="period">/bulan</div>
+                <h3>Visit Harian</h3>
+                <div class="price">Rp 12.000</div>
+                <div class="period">/hari</div>
                 <ul>
                     <li>Akses gym 07:00 - 21:00</li>
-                    <li>Alat gym standar</li>
-                    <li>1x free gym tour</li>
+                    <li>Alat gym lengkap</li>
+                    <li>Loker harian</li>
+                </ul>
+                <button class="btn" style="width:100%" onclick="switchTab('daftar')">Pilih Paket</button>
+            </div>
+            <div class="pricing-card">
+                <h3>Mingguan</h3>
+                <div class="price">Rp 45.000</div>
+                <div class="period">/7 hari</div>
+                <ul>
+                    <li>Akses gym 07:00 - 21:00</li>
+                    <li>Alat gym lengkap</li>
+                    <li>Kelas grup gratis</li>
                     <li>Loker harian</li>
                 </ul>
                 <button class="btn" style="width:100%" onclick="switchTab('daftar')">Pilih Paket</button>
             </div>
             <div class="pricing-card featured">
-                <h3>Premium</h3>
-                <div class="price">Rp 350.000</div>
+                <h3>Bulanan</h3>
+                <div class="price">Rp 120.000</div>
                 <div class="period">/bulan</div>
                 <ul>
-                    <li>Akses 07.00 - 21.00</li>
-                    <li>Semua alat gym</li>
-                    <li>Kelas grup gratis</li>
-                    <li>1x personal training</li>
-                    <li>Loker VIP + handuk</li>
-                </ul>
-                <button class="btn" style="width:100%" onclick="switchTab('daftar')">Pilih Paket</button>
-            </div>
-            <div class="pricing-card">
-                <h3>VIP</h3>
-                <div class="price">Rp 500.000</div>
-                <div class="period">/bulan</div>
-                <ul>
-                    <li>Akses 07.00 - 21.00</li>
-                    <li>Semua alat + area VIP</li>
-                    <li>Semua kelas gratis</li>
-                    <li>4x personal training</li>
-                    <li>Loker premium + handuk + protein</li>
-                    <li>Konsultasi gizi</li>
-                </ul>
-                <button class="btn" style="width:100%" onclick="switchTab('daftar')">Pilih Paket</button>
-            </div>
-            <div class="pricing-card">
-                <h3>Tahunan</h3>
-                <div class="price">Rp 2.000.000</div>
-                <div class="period">/tahun (hemat 17%)</div>
-                <ul>
-                    <li>Akses 07.00 - 21.00</li>
-                    <li>Semua alat gym</li>
-                    <li>Semua kelas gratis</li>
-                    <li>2x personal training/bulan</li>
-                    <li>Loker VIP + handuk</li>
-                    <li>Konsultasi gizi 2x</li>
-                    <li>Free merchandise</li>
+                    <li>Akses gym 07:00 - 21:00</li>
+                    <li>Alat gym lengkap</li>
+                    <li>Semua kelas grup gratis</li>
+                    <li>Loker prioritas</li>
                 </ul>
                 <button class="btn" style="width:100%" onclick="switchTab('daftar')">Pilih Paket</button>
             </div>
@@ -760,10 +735,9 @@
 
 <script>
     const plans = {
-        basic: { label: 'Basic', price: 'Rp 200.000/bulan', promo: 'Diskon 20%', total: 'Rp 160.000' },
-        premium: { label: 'Premium', price: 'Rp 350.000/bulan', promo: 'Diskon 20%', total: 'Rp 280.000' },
-        vip: { label: 'VIP', price: 'Rp 500.000/bulan', promo: 'Diskon 20%', total: 'Rp 400.000' },
-        tahunan: { label: 'Tahunan', price: 'Rp 2.000.000/tahun', promo: 'Diskon 20%', total: 'Rp 1.600.000' },
+        harian: { label: 'Harian', price: 'Rp 12.000/hari', promo: '-', total: 'Rp 12.000' },
+        mingguan: { label: 'Mingguan', price: 'Rp 45.000/7 hari', promo: '-', total: 'Rp 45.000' },
+        bulanan: { label: 'Bulanan', price: 'Rp 120.000/bulan', promo: '-', total: 'Rp 120.000' },
     };
 
     // Tab switching
@@ -785,7 +759,6 @@
         const m = document.getElementById('membership').value;
         const plan = plans[m];
         document.getElementById('s-plan').textContent = plan ? plan.price : '-';
-        document.getElementById('s-promo').textContent = plan ? plan.promo : '-';
         document.getElementById('s-total').textContent = plan ? plan.total : '-';
     }
 
