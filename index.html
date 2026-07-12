@@ -69,6 +69,15 @@
             flex-wrap: wrap;
             position: relative;
         }
+        .nav-links-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+        }
+        .nav-links-wrap::before,
+        .nav-links-wrap::after { display: none; }
         .nav-links button {
             background: transparent;
             border: none;
@@ -328,7 +337,7 @@
         @media (max-width: 760px) {
             .navbar { flex-wrap: nowrap; }
             .nav-links {
-                flex: 1; min-width: 0;
+                min-width: 0;
                 justify-content: flex-start;
                 overflow-x: auto; flex-wrap: nowrap;
                 -webkit-overflow-scrolling: touch;
@@ -336,6 +345,17 @@
             }
             .nav-links::-webkit-scrollbar { display: none; }
             .nav-links button { white-space: nowrap; }
+            .nav-links-wrap::before,
+            .nav-links-wrap::after {
+                display: block; position: absolute; top: 50%; transform: translateY(-50%);
+                font-size: 20px; font-weight: 800; color: var(--muted); pointer-events: none; z-index: 2;
+            }
+            .nav-links-wrap::before { content: '['; left: 0; }
+            .nav-links-wrap::after {
+                content: ']'; right: 0; width: 24px; text-align: right;
+                background: linear-gradient(to left, var(--bg) 40%, transparent);
+            }
+            .nav-links { padding: 0 18px; }
             .row { grid-template-columns: 1fr; }
             .contact-grid { grid-template-columns: 1fr; }
             .hero { padding: 30px 10px 20px; }
@@ -351,13 +371,15 @@
         <div class="logo">💪</div>
         <span>IronFit Gym</span>
     </div>
-    <div class="nav-links">
-        <span class="nav-indicator" id="navIndicator"></span>
-        <button class="active" data-tab="home">Beranda</button>
-        <button data-tab="daftar">Daftar</button>
-        <button data-tab="trainer">Trainer</button>
-        <button data-tab="harga">Harga</button>
-        <button data-tab="kontak">Kontak</button>
+    <div class="nav-links-wrap">
+        <div class="nav-links">
+            <span class="nav-indicator" id="navIndicator"></span>
+            <button class="active" data-tab="home">Beranda</button>
+            <button data-tab="daftar">Daftar</button>
+            <button data-tab="trainer">Trainer</button>
+            <button data-tab="harga">Harga</button>
+            <button data-tab="kontak">Kontak</button>
+        </div>
     </div>
 </nav>
 
