@@ -235,37 +235,6 @@
         }
         .badge.ok { color: var(--ok); border-color: #163129; background: #0b1f18; }
 
-        /* ===== SCHEDULE ===== */
-        .schedule-grid {
-            display: grid;
-            grid-template-columns: 100px repeat(7, 1fr);
-            gap: 6px;
-            overflow-x: auto;
-            font-size: 13px;
-        }
-        .sched-header {
-            font-weight: 700; text-align: center; padding: 10px 4px;
-            background: var(--panel-2); border-radius: 8px; border: 1px solid var(--border);
-        }
-        .sched-time {
-            font-weight: 600; color: var(--muted); font-size: 12px;
-            display: flex; align-items: center; justify-content: center;
-            padding: 8px 4px;
-        }
-        .sched-cell {
-            background: var(--panel-2); border-radius: 8px; padding: 8px 4px;
-            text-align: center; border: 1px solid var(--border); min-height: 60px;
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .sched-cell .name { font-weight: 600; font-size: 12px; }
-        .sched-cell .trainer { font-size: 10px; color: var(--muted); }
-        .sched-cell.yoga { border-color: #7c3aed; background: #1f1335; }
-        .sched-cell.hiit { border-color: var(--accent); background: #2a1515; }
-        .sched-cell.angkat { border-color: var(--accent-2); background: #2a1f10; }
-        .sched-cell.zumba { border-color: #ec4899; background: #2a1320; }
-        .sched-cell.pilates { border-color: var(--ok); background: #0b1f18; }
-        .sched-cell.spinning { border-color: #3b82f6; background: #111f30; }
-
         /* ===== TRAINER ===== */
         .trainer-grid {
             display: grid;
@@ -344,7 +313,6 @@
             .nav-links { justify-content: center; }
             .row { grid-template-columns: 1fr; }
             .contact-grid { grid-template-columns: 1fr; }
-            .schedule-grid { font-size: 11px; grid-template-columns: 70px repeat(7, 1fr); }
             .hero { padding: 30px 10px 20px; }
         }
     </style>
@@ -359,7 +327,6 @@
     <div class="nav-links">
         <button class="active" data-tab="home">Beranda</button>
         <button data-tab="daftar">Daftar</button>
-        <button data-tab="jadwal">Jadwal</button>
         <button data-tab="trainer">Trainer</button>
         <button data-tab="harga">Harga</button>
         <button data-tab="kontak">Kontak</button>
@@ -512,70 +479,6 @@
         </div>
     </section>
 
-    <!-- ==================== JADWAL ==================== -->
-    <section class="section" id="tab-jadwal">
-        <div class="section-title">Jadwal Kelas</div>
-        <div class="section-sub">Jadwal kelas fitness mingguan IronFit Gym</div>
-
-        <div class="panel">
-            <div class="schedule-grid">
-                <div class="sched-header">Waktu</div>
-                <div class="sched-header">Senin</div>
-                <div class="sched-header">Selasa</div>
-                <div class="sched-header">Rabu</div>
-                <div class="sched-header">Kamis</div>
-                <div class="sched-header">Jumat</div>
-                <div class="sched-header">Sabtu</div>
-                <div class="sched-header">Minggu</div>
-
-                <div class="sched-time">06:00 - 07:00</div>
-                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
-                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
-                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
-                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
-                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
-                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
-                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
-
-                <div class="sched-time">07:00 - 08:00</div>
-                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
-                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
-                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
-                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
-                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
-                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
-                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
-
-                <div class="sched-time">16:00 - 17:00</div>
-                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
-                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
-                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
-                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
-                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
-                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
-                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
-
-                <div class="sched-time">17:00 - 18:00</div>
-                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
-                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
-                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
-                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
-                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
-                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
-                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
-
-                <div class="sched-time">18:00 - 19:00</div>
-                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
-                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
-                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
-                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
-                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
-                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
-                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
-            </div>
-        </div>
-    </section>
-
     <!-- ==================== TRAINER ==================== -->
     <section class="section" id="tab-trainer">
         <div class="section-title">Trainer Kami</div>
@@ -593,31 +496,7 @@
                 <h3>Rina Setiawati</h3>
                 <div class="spec">Yoga & Pilates</div>
                 <p>Yoga Alliance certified, 6 tahun mengajar. Ahli fleksibilitas dan keseimbangan tubuh.</p>
-            </div>
-            <div class="trainer-card">
-                <div class="trainer-avatar">BH</div>
-                <h3>Budi Hartono</h3>
-                <div class="spec">HIIT & Cardio</div>
-                <p>Bersertifikat ACE, 5 tahun pengalaman. Spesialis program pembakaran lemak intensitas tinggi.</p>
-            </div>
-            <div class="trainer-card">
-                <div class="trainer-avatar">SP</div>
-                <h3>Sari Permata</h3>
-                <div class="spec">Zumba & Dance Fitness</div>
-                <p>Instruktur Zumba resmi, 4 tahun pengalaman. Membakar kalori sambil bersenang-senang.</p>
-            </div>
-            <div class="trainer-card">
-                <div class="trainer-avatar">DP</div>
-                <h3>Dewi Pratiwi</h3>
-                <div class="spec">Pilates & Rehab</div>
-                <p>Bersertifikat BODY, 5 tahun pengalaman. Spesialis postur tubuh dan pemulihan cedera.</p>
-            </div>
-            <div class="trainer-card">
-                <div class="trainer-avatar">DW</div>
-                <h3>Doni Wijaya</h3>
-                <div class="spec">Spinning & Cycling</div>
-                <p>Bersertifikat Schwinn, 4 tahun pengalaman. Kelas spinning intens dengan motivasi tinggi.</p>
-            </div>
+
         </div>
     </section>
 
