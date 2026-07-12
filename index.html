@@ -94,16 +94,7 @@
             z-index: 1;
         }
         .nav-links button:hover { color: var(--text); background: var(--panel-2); }
-        .nav-links button.active { color: #fff; }
-        .nav-indicator {
-            position: absolute; top: 0; bottom: 0;
-            border-radius: 8px;
-            background: linear-gradient(135deg, var(--nav-active), var(--nav-active-2));
-            box-shadow: 0 6px 18px rgba(124,58,237,0.35);
-            left: 0; width: 0;
-            z-index: 0; pointer-events: none;
-            transition: left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1);
-        }
+        .nav-links button.active { color: #fff; background: linear-gradient(135deg, var(--nav-active), var(--nav-active-2)); box-shadow: 0 4px 14px rgba(124,58,237,0.35); }
 
         .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
 
@@ -375,7 +366,6 @@
     </div>
     <div class="nav-links-wrap">
         <div class="nav-links">
-            <span class="nav-indicator" id="navIndicator"></span>
             <button class="active" data-tab="home">Beranda</button>
             <button data-tab="daftar">Daftar</button>
             <button data-tab="trainer">Trainer</button>
@@ -680,28 +670,7 @@
         const btn = document.querySelector(`[data-tab="${tab}"]`);
         if (section) section.classList.add('active');
         if (btn) btn.classList.add('active');
-        moveIndicator(btn);
     }
-
-    function moveIndicator(btn) {
-        const ind = document.getElementById('navIndicator');
-        if (!btn || !ind) return;
-        const wrap = btn.closest('.nav-links');
-        const base = wrap.getBoundingClientRect();
-        const r = btn.getBoundingClientRect();
-        ind.style.left = (r.left - base.left) + 'px';
-        ind.style.width = r.width + 'px';
-    }
-    function positionIndicator() {
-        moveIndicator(document.querySelector('.nav-links button.active'));
-    }
-    document.addEventListener('DOMContentLoaded', positionIndicator);
-    window.addEventListener('load', positionIndicator);
-    window.addEventListener('resize', positionIndicator);
-    requestAnimationFrame(() => requestAnimationFrame(positionIndicator));
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(positionIndicator);
-    setTimeout(positionIndicator, 60);
-    setTimeout(positionIndicator, 250);
 
     // Form
     function updateSummary() {
