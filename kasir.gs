@@ -21,7 +21,7 @@ function doPost(e) {
       new Date(),
       data.nama || '',
       data.paket || '',
-      data.nominal || '',
+      Number(data.nominal) || 0,
       data.metode || '',
       data.tanggal || '',
       data.catatan || ''
@@ -33,24 +33,30 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  if (e.parameter.token !== TOKEN) return json({ error: 'unauthorized' });
+  try {
+    if (e.parameter.token !== TOKEN) return json({ error: 'unauthorized' });
 
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Transaksi');
-  const last = sheet.getLastRow();
-  const limit = 200;
-  const start = Math.max(2, last - limit + 1);
-  const rows = last < 2 ? [] : sheet.getRange(start, 1, last - start + 1, 7).getValues();
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Transaksi');
+    if (!sheet) return json({ error: 'sheet Transaksi tidak ditemukan' });
 
-  const out = rows.map(r => ({
-    waktu: r[0],
-    nama: r[1],
-    paket: r[2],
-    nominal: r[3],
-    metode: r[4],
-    tanggal: r[5],
-    catatan: r[6]
-  }));
-  return json({ rows: out });
+    const last = sheet.getLastRow();
+    const limit = 200;
+    const start = Math.max(2, last - limit + 1);
+    const rows = last < 2 ? [] : sheet.getRange(start, 1, last - start + 1, 7).getValues();
+
+    const out = rows.map(r => ({
+      waktu: r[0],
+      nama: r[1],
+      paket: r[2],
+      nominal: r[3],
+      metode: r[4],
+      tanggal: r[5],
+      catatan: r[6]
+    }));
+    return json({ rows: out });
+  } catch (err) {
+    return json({ error: String(err) });
+  }
 }
 
 function json(obj) {

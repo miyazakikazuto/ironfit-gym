@@ -172,13 +172,18 @@ const formMsg = document.getElementById('formMsg');
 document.getElementById('saveBtn').addEventListener('click', () => {
   const nama = document.getElementById('nama').value.trim();
   if (!nama) { formMsg.textContent = 'Nama member wajib diisi'; formMsg.className = 'msg err'; return; }
+  const tglVal = tanggal.value.trim();
+  if (tglVal !== '' && !/^\d{2}\/\d{2}\/\d{4}$/.test(tglVal)) {
+    formMsg.textContent = 'Format tanggal salah (DD/MM/YYYY)'; formMsg.className = 'msg err'; return;
+  }
+  const tglFinal = tglVal || todayDDMMYYYY();
   const payload = {
     token: TOKEN,
     nama: nama,
     paket: paket.value,
     nominal: nominal.value || '0',
     metode: document.getElementById('metode').value,
-    tanggal: tanggal.value,
+    tanggal: tglFinal,
     catatan: document.getElementById('catatan').value.trim()
   };
   formMsg.textContent = 'Menyimpan...'; formMsg.className = 'msg';
