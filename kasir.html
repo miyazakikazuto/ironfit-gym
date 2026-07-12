@@ -26,6 +26,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .row2 .field{flex:1;}
 .btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--nav-active),var(--nav-active-2));color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);}
 .btn:active{transform:translateY(1px);}
+.del-btn{padding:6px 10px;border:none;border-radius:8px;background:#3a1d1d;color:#ff6b6b;font-size:12px;cursor:pointer;font-family:var(--font);}
+.del-btn:hover{background:#4a2424;}
+.del-btn:disabled{opacity:.5;cursor:default;}
 table{width:100%;border-collapse:collapse;font-size:14px;}
 th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--border);}
 th{color:var(--muted);font-weight:600;font-size:12px;}
@@ -113,7 +116,7 @@ th{color:var(--muted);font-weight:600;font-size:12px;}
       </div>
       <div style="overflow-x:auto;margin-top:14px">
         <table>
-          <thead><tr><th>Tanggal</th><th>Nama</th><th>Paket</th><th>Nominal</th><th>Metode</th><th>Catatan</th></tr></thead>
+          <thead><tr><th>Tanggal</th><th>Nama</th><th>Paket</th><th>Nominal</th><th>Metode</th><th>Catatan</th><th>Aksi</th></tr></thead>
           <tbody id="historyBody"></tbody>
         </table>
       </div>
@@ -208,6 +211,15 @@ const historyBody = document.getElementById('historyBody');
 const totalLine = document.getElementById('totalLine');
 document.getElementById('refreshBtn').addEventListener('click', loadHistory);
 
+historyBody.addEventListener('click', e => {
+  const btn = e.target.closest('.del-btn');
+  if (!btn) return;
+  const id = btn.getAttribute('data-id');
+  if (!id) return;
+  if (!confirm('Hapus transaksi ini?')) return;
+  hapus(id, btn);
+});
+
 function loadHistory() {
   if (API.indexOf('PASTE') === 0) { totalLine.textContent = 'Isi API URL di kasir.html'; return; }
   fetch(API + '?token=' + encodeURIComponent(TOKEN))
@@ -219,7 +231,8 @@ function loadHistory() {
       historyBody.innerHTML = shown.map(r => {
         const nom = Number(r.nominal || 0);
         return '<tr><td>' + esc(fmtTgl(r.tanggal)) + '</td><td>' + esc(r.nama) + '</td><td>' + esc(r.paket) +
-          '</td><td>Rp ' + nom.toLocaleString('id-ID') + '</td><td>' + esc(r.metode) + '</td><td>' + esc(r.catatan) + '</td></tr>';
+          '</td><td>Rp ' + nom.toLocaleString('id-ID') + '</td><td>' + esc(r.metode) + '</td><td>' + esc(r.catatan) +
+          '</td><td>' + (r.id ? '<button class="del-btn" data-id="' + esc(r.id) + '">Hapus</button>' : '') + '</td></tr>';
       }).join('');
       const total = shown.reduce((s, r) => s + Number(r.nominal || 0), 0);
       totalLine.textContent = 'Total' + (f ? ' (' + f + ')' : '') + ': Rp ' + total.toLocaleString('id-ID');
@@ -229,6 +242,14 @@ function loadHistory() {
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+function hapus(id, btn) {
+  btn.disabled = true;
+  fetch(API + '?token=' + encodeURIComponent(TOKEN) + '&action=delete&id=' + encodeURIComponent(id))
+    .then(r => r.json())
+    .then(res => { if (res.ok) loadHistory(); else alert('Gagal: ' + (res.error || 'unknown')); })
+    .catch(err => { btn.disabled = false; alert('Gagal: ' + err); });
 }
 function fmtTgl(t) {
   if (typeof t === 'string' && t.indexOf('T') > -1) {

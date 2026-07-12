@@ -25,7 +25,8 @@ function doPost(e) {
       Number(data.nominal) || 0,
       data.metode || '',
       data.tanggal || '',
-      data.catatan || ''
+      data.catatan || '',
+      String(Date.now())
     ]);
     sheet.getRange(sheet.getLastRow(), 6).setNumberFormat('@').setValue(data.tanggal || '');
     return json({ ok: true });
@@ -49,25 +50,33 @@ function doGet(e) {
         Number(e.parameter.nominal) || 0,
         e.parameter.metode || '',
         e.parameter.tanggal || '',
-        e.parameter.catatan || ''
+        e.parameter.catatan || '',
+        String(Date.now())
       ]);
       sheet.getRange(sheet.getLastRow(), 6).setNumberFormat('@').setValue(e.parameter.tanggal || '');
       return json({ ok: true });
     }
 
+    if (e.parameter.action === 'delete') {
+      const id = e.parameter.id || '';
+      const data = sheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][7]) === id) {
+          sheet.deleteRow(i + 1);
+          return json({ ok: true });
+        }
+      }
+      return json({ error: 'not found' });
+    }
+
     const last = sheet.getLastRow();
     const limit = 200;
     const start = Math.max(2, last - limit + 1);
-    const rows = last < 2 ? [] : sheet.getRange(start, 1, last - start + 1, 7).getValues();
+    const rows = last < 2 ? [] : sheet.getRange(start, 1, last - start + 1, 8).getValues();
 
     const out = rows.map(r => ({
-      waktu: r[0],
-      nama: r[1],
-      paket: r[2],
-      nominal: r[3],
-      metode: r[4],
-      tanggal: r[5],
-      catatan: r[6]
+      waktu: r[0], nama: r[1], paket: r[2], nominal: r[3],
+      metode: r[4], tanggal: r[5], catatan: r[6], id: r[7] ? String(r[7]) : ''
     }));
     return json({ rows: out });
   } catch (err) {
