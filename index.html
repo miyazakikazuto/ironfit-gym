@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronFit Gym</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0f0f12;
+            --panel: #16161a;
+            --panel-2: #1c1c22;
+            --text: #f0f0f5;
+            --muted: #9aa3b2;
+            --accent: #ff4d4d;
+            --accent-2: #ff8c42;
+            --border: #27272f;
+            --ok: #2dd4a8;
+            --warn: #facc15;
+            --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: radial-gradient(1200px 800px at 10% -10%, #2a1f3d 0%, transparent 55%),
+                        radial-gradient(1200px 800px at 110% 10%, #3a1f1f 0%, transparent 55%),
+                        var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: rgba(22,22,26,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .nav-brand .logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            font-size: 18px;
+            box-shadow: 0 6px 18px rgba(255,77,77,0.3);
+        }
+        .nav-links {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .nav-links button {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.15s;
+            font-family: var(--font);
+        }
+        .nav-links button:hover { color: var(--text); background: var(--panel-2); }
+        .nav-links button.active { color: #fff; background: var(--accent); }
+
+        .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .section-sub {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+        .panel h2 { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+        .panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--muted); }
+
+        /* ===== HOME ===== */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 900;
+            line-height: 1.15;
+        }
+        .hero h1 span { background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p {
+            color: var(--muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 16px auto 28px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+            font-family: var(--font);
+            text-decoration: none;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(255,77,77,0.35); }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+            margin-left: 10px;
+        }
+        .btn-outline:hover { border-color: var(--accent); box-shadow: none; }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 30px;
+        }
+        .benefit-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            transition: .15s;
+        }
+        .benefit-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .benefit-card .icon { font-size: 36px; margin-bottom: 10px; }
+        .benefit-card h3 { font-size: 16px; color: var(--text); margin-bottom: 6px; }
+        .benefit-card p { font-size: 13px; color: var(--muted); }
+
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .testi {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+        .testi .stars { color: var(--warn); font-size: 14px; margin-bottom: 8px; }
+        .testi p { font-size: 13px; color: var(--muted); margin-bottom: 10px; font-style: italic; }
+        .testi .name { font-size: 13px; font-weight: 600; }
+        .testi .role { font-size: 12px; color: var(--muted); }
+
+        /* ===== FORM ===== */
+        .form { display: flex; flex-direction: column; gap: 14px; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+        .field { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 4px; }
+        input, select, textarea {
+            width: 100%; padding: 12px 14px; background: transparent; border: none;
+            color: var(--text); font-size: 15px; outline: none; font-family: var(--font);
+        }
+        input::placeholder { color: #6b6f78; }
+        select option { background: var(--panel-2); color: var(--text); }
+        textarea { resize: vertical; min-height: 80px; }
+
+        .radio { display: flex; gap: 10px; }
+        .chip { flex: 1; position: relative; }
+        .chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .chip label {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px; background: var(--panel-2); border: 1px solid var(--border);
+            border-radius: 10px; cursor: pointer; color: var(--muted);
+            font-weight: 600; transition: 0.15s; margin-bottom: 0;
+        }
+        .chip input:checked + label { border-color: var(--accent); color: #fff; background: #2a1515; box-shadow: 0 0 0 1px var(--accent) inset; }
+        .cta {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white; font-weight: 700; font-size: 16px; cursor: pointer;
+            transition: transform .15s, box-shadow .15s; font-family: var(--font);
+        }
+        .cta:hover { transform: translateY(-1px); box-shadow: 0 15px 30px rgba(255,77,77,0.35); }
+        .hint { margin-top: 10px; font-size: 12px; color: #6b6f78; }
+
+        .success { display: none; text-align: center; padding: 30px; }
+        .success.show { display: block; }
+        .success .icon { font-size: 54px; margin-bottom: 10px; }
+        .success h3 { font-size: 20px; margin-bottom: 8px; }
+        .success p { color: var(--muted); font-size: 14px; }
+
+        .price-summary {
+            margin-top: 16px;
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+        }
+        .price-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); padding: 6px 0; }
+        .price-row.total { color: var(--text); font-weight: 700; border-top: 1px solid var(--border); margin-top: 6px; padding-top: 10px; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 10px; border-radius: 999px; background: #1c1c22;
+            border: 1px solid var(--border); font-size: 12px; color: var(--muted);
+        }
+        .badge.ok { color: var(--ok); border-color: #163129; background: #0b1f18; }
+
+        /* ===== MEMBER TABLE ===== */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; padding: 12px 10px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 12px 10px; border-bottom: 1px solid var(--border); }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .badge-status {
+            display: inline-block; padding: 3px 10px; border-radius: 999px;
+            font-size: 11px; font-weight: 600;
+        }
+        .badge-status.active { background: #0b1f18; color: var(--ok); border: 1px solid #163129; }
+        .btn-sm {
+            padding: 6px 12px; border: none; border-radius: 8px;
+            font-size: 12px; font-weight: 600; cursor: pointer;
+            font-family: var(--font); transition: .1s;
+        }
+        .btn-sm.danger { background: #2a1515; color: var(--accent); border: 1px solid #3f2020; }
+        .btn-sm.danger:hover { background: #3f2020; }
+        .btn-sm.warning { background: #1f1f10; color: var(--warn); border: 1px solid #3f3f10; }
+        .btn-sm.warning:hover { background: #2f2f10; }
+        .search-bar {
+            display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .search-bar input {
+            flex: 1; min-width: 200px; background: var(--panel-2);
+            border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px;
+            color: var(--text); font-size: 14px; outline: none; font-family: var(--font);
+        }
+        .search-bar input::placeholder { color: #6b6f78; }
+        .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+        .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+
+        /* ===== SCHEDULE ===== */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 100px repeat(7, 1fr);
+            gap: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        .sched-header {
+            font-weight: 700; text-align: center; padding: 10px 4px;
+            background: var(--panel-2); border-radius: 8px; border: 1px solid var(--border);
+        }
+        .sched-time {
+            font-weight: 600; color: var(--muted); font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 8px 4px;
+        }
+        .sched-cell {
+            background: var(--panel-2); border-radius: 8px; padding: 8px 4px;
+            text-align: center; border: 1px solid var(--border); min-height: 60px;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .sched-cell .name { font-weight: 600; font-size: 12px; }
+        .sched-cell .trainer { font-size: 10px; color: var(--muted); }
+        .sched-cell.yoga { border-color: #7c3aed; background: #1f1335; }
+        .sched-cell.hiit { border-color: var(--accent); background: #2a1515; }
+        .sched-cell.angkat { border-color: var(--accent-2); background: #2a1f10; }
+        .sched-cell.zumba { border-color: #ec4899; background: #2a1320; }
+        .sched-cell.pilates { border-color: var(--ok); background: #0b1f18; }
+        .sched-cell.spinning { border-color: #3b82f6; background: #111f30; }
+
+        /* ===== TRAINER ===== */
+        .trainer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px;
+        }
+        .trainer-card {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            transition: .15s;
+        }
+        .trainer-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .trainer-avatar {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: grid; place-items: center;
+            font-size: 28px; font-weight: 800;
+            margin: 0 auto 12px;
+        }
+        .trainer-card h3 { font-size: 16px; color: var(--text); margin-bottom: 4px; }
+        .trainer-card .spec { font-size: 13px; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+        .trainer-card p { font-size: 13px; color: var(--muted); }
+
+        /* ===== PRICING ===== */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px;
+        }
+        .pricing-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: .15s;
+            position: relative;
+        }
+        .pricing-card.featured { border-color: var(--accent); box-shadow: 0 0 30px rgba(255,77,77,0.1); }
+        .pricing-card.featured::before {
+            content: 'POPULER'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            padding: 4px 16px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+        }
+        .pricing-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .pricing-card .price { font-size: 32px; font-weight: 900; margin: 12px 0; }
+        .pricing-card .price span { font-size: 14px; font-weight: 400; color: var(--muted); }
+        .pricing-card .period { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+        .pricing-card ul { list-style: none; text-align: left; margin-bottom: 16px; }
+        .pricing-card ul li { padding: 6px 0; font-size: 13px; color: var(--muted); }
+        .pricing-card ul li::before { content: '✓ '; color: var(--ok); font-weight: 700; }
+
+        /* ===== CONTACT ===== */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        .contact-info { display: flex; flex-direction: column; gap: 16px; }
+        .contact-item { display: flex; align-items: flex-start; gap: 12px; }
+        .contact-item .icon { font-size: 20px; min-width: 28px; }
+        .contact-item .label { font-size: 12px; color: var(--muted); }
+        .contact-item .value { font-size: 15px; font-weight: 600; }
+        .map-placeholder {
+            background: var(--panel-2); border-radius: 12px;
+            display: grid; place-items: center; min-height: 200px;
+            border: 1px solid var(--border); color: var(--muted); font-size: 14px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 760px) {
+            .navbar { flex-direction: column; gap: 8px; }
+            .nav-links { justify-content: center; }
+            .row { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .schedule-grid { font-size: 11px; grid-template-columns: 70px repeat(7, 1fr); }
+            .hero { padding: 30px 10px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">
+        <div class="logo">💪</div>
+        <span>IronFit Gym</span>
+    </div>
+    <div class="nav-links">
+        <button class="active" data-tab="home">Beranda</button>
+        <button data-tab="daftar">Daftar</button>
+        <button data-tab="member">Member</button>
+        <button data-tab="jadwal">Jadwal</button>
+        <button data-tab="trainer">Trainer</button>
+        <button data-tab="harga">Harga</button>
+        <button data-tab="kontak">Kontak</button>
+    </div>
+</nav>
+
+<div class="wrap">
+
+    <!-- ==================== HOME ==================== -->
+    <section class="section active" id="tab-home">
+        <div class="hero">
+            <h1>Transformasi <span>Dirimu</span> <br>Mulai Hari Ini</h1>
+            <p>Gabung dengan IronFit Gym dan dapatkan akses ke peralatan modern, trainer profesional, dan kelas fitness terbaik.</p>
+            <button class="btn" onclick="switchTab('daftar')">Daftar Sekarang</button>
+            <button class="btn btn-outline" onclick="switchTab('harga')">Lihat Paket</button>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 20px;">Kenapa Pilih Kami?</h2>
+        <div class="benefits">
+            <div class="benefit-card">
+                <div class="icon">🏋️</div>
+                <h3>Alat Modern</h3>
+                <p>Peralatan gym terbaru dengan standar internasional untuk hasil maksimal.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">👨‍🏫</div>
+                <h3>Trainer Sertifikasi</h3>
+                <p>Didampingi trainer profesional yang siap membantu program latihanmu.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">📅</div>
+                <h3>Kelas Variasi</h3>
+                <p>Yoga, HIIT, Zumba, Angkat Beban, dan banyak kelas lainnya setiap hari.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">🕐</div>
+                <h3>Buka 24 Jam</h3>
+                <p>Akses 24/7 penuh, cocok untuk jadwal sibukmu kapan pun.</p>
+            </div>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 30px;">Apa Kata Member</h2>
+        <div class="testimonials">
+            <div class="testi">
+                <div class="stars">★★★★★</div>
+                <p>"Gym terbaik di kota! Alat lengkap, trainer ramah, suasananya juga nyaman."</p>
+                <div class="name">Andi Pratama</div>
+                <div class="role">Member Premium</div>
+            </div>
+            <div class="testi">
+                <div class="stars">★★★★★</div>
+                <p>"Setelah 3 bulan latihan di sini, badan terasa jauh lebih fit. Highly recommended!"</p>
+                <div class="name">Sari Dewi</div>
+                <div class="role">Member VIP</div>
+            </div>
+            <div class="testi">
+                <div class="stars">★★★★☆</div>
+                <p>"Kelas HIIT-nya mantap! Instrukturnya energik dan profesional banget."</p>
+                <div class="name">Budi Santoso</div>
+                <div class="role">Member Basic</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== DAFTAR ==================== -->
+    <section class="section" id="tab-daftar">
+        <div class="section-title">Pendaftaran Member</div>
+        <div class="section-sub">Isi data dirimu untuk menjadi member IronFit Gym</div>
+
+        <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap:18px;">
+            <div class="panel" id="formPanel">
+                <h2>Data Pribadi</h2>
+                <form class="form" id="regForm">
+                    <div class="row">
+                        <div class="field">
+                            <label for="nama">Nama Lengkap</label>
+                            <input type="text" id="nama" name="nama" placeholder="Nama lengkap" required>
+                        </div>
+                        <div class="field">
+                            <label for="tgl-lahir">Tanggal Lahir</label>
+                            <input type="date" id="tgl-lahir" name="tglLahir" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="contoh@email.com" required>
+                        </div>
+                        <div class="field">
+                            <label for="telepon">No. Telepon</label>
+                            <input type="tel" id="telepon" name="telepon" placeholder="08xxxxxxxxxx" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Jenis Kelamin</label>
+                        <div class="radio">
+                            <div class="chip">
+                                <input type="radio" name="gender" value="Laki-laki" id="g-l" required>
+                                <label for="g-l">♂ Laki-laki</label>
+                            </div>
+                            <div class="chip">
+                                <input type="radio" name="gender" value="Perempuan" id="g-p">
+                                <label for="g-p">♀ Perempuan</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="membership">Pilih Membership</label>
+                        <select id="membership" name="membership" onchange="updateSummary()" required>
+                            <option value="">-- Pilih Paket --</option>
+                            <option value="basic">Basic - Rp 200.000/bulan</option>
+                            <option value="premium">Premium - Rp 350.000/bulan</option>
+                            <option value="vip">VIP - Rp 500.000/bulan</option>
+                            <option value="tahunan">Tahunan - Rp 2.000.000/tahun</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="tujuan">Tujuan Fitness</label>
+                        <select id="tujuan" name="tujuan">
+                            <option value="">-- Pilih Tujuan --</option>
+                            <option value="Menurunkan Berat Badan">Menurunkan Berat Badan</option>
+                            <option value="Meningkatkan Massa Otot">Meningkatkan Massa Otot</option>
+                            <option value="Kesehatan Umum">Kesehatan Umum</option>
+                            <option value="Meningkatkan Stamina">Meningkatkan Stamina</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="alamat">Alamat</label>
+                        <textarea id="alamat" name="alamat" placeholder="Alamat lengkap"></textarea>
+                    </div>
+                    <button type="submit" class="cta">Daftar Sekarang</button>
+                    <div class="hint">Dengan mendaftar, kamu setuju dengan syarat & ketentuan layanan gym.</div>
+                </form>
+
+                <div class="success" id="successState">
+                    <div class="icon">✅</div>
+                    <h3>Pendaftaran Berhasil</h3>
+                    <p>Terima kasih! Data kamu sudah tersimpan. Tim kami akan menghubungimu untuk verifikasi.</p>
+                    <button class="cta" style="margin-top:14px" onclick="resetForm()">Daftar Lagi</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Ringkasan</h2>
+                <div class="price-summary">
+                    <div class="price-row"><span>Paket</span><span id="s-plan">-</span></div>
+                    <div class="price-row"><span>Promo</span><span id="s-promo">-</span></div>
+                    <div class="price-row total"><span>Total</span><span id="s-total">-</span></div>
+                </div>
+                <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;">
+                    <span class="badge ok">✔ Diskon 20% bulan pertama</span>
+                    <span class="badge">✔ Free gym tour</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MEMBER ==================== -->
+    <section class="section" id="tab-member">
+        <div class="section-title">Data Member</div>
+        <div class="section-sub">Semua member yang terdaftar</div>
+
+        <div class="panel">
+            <div class="search-bar">
+                <input type="text" id="searchMember" placeholder="Cari nama member..." oninput="renderMembers()">
+                <button class="btn-sm warning" onclick="clearAllMembers()">Hapus Semua</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Telepon</th>
+                            <th>Paket</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="memberBody"></tbody>
+                </table>
+            </div>
+            <div class="empty-state" id="emptyState">
+                <div class="icon">📋</div>
+                <p>Belum ada member terdaftar.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== JADWAL ==================== -->
+    <section class="section" id="tab-jadwal">
+        <div class="section-title">Jadwal Kelas</div>
+        <div class="section-sub">Jadwal kelas fitness mingguan IronFit Gym</div>
+
+        <div class="panel">
+            <div class="schedule-grid">
+                <div class="sched-header">Waktu</div>
+                <div class="sched-header">Senin</div>
+                <div class="sched-header">Selasa</div>
+                <div class="sched-header">Rabu</div>
+                <div class="sched-header">Kamis</div>
+                <div class="sched-header">Jumat</div>
+                <div class="sched-header">Sabtu</div>
+                <div class="sched-header">Minggu</div>
+
+                <div class="sched-time">06:00 - 07:00</div>
+                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
+                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
+                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
+                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
+                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
+                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
+                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
+
+                <div class="sched-time">07:00 - 08:00</div>
+                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
+                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
+                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
+                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
+                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
+                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
+                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
+
+                <div class="sched-time">16:00 - 17:00</div>
+                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
+                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
+                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
+                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
+                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
+                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
+                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
+
+                <div class="sched-time">17:00 - 18:00</div>
+                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
+                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
+                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
+                <div class="sched-cell angkat"><div class="name">Angkat Beban</div><div class="trainer">Adi</div></div>
+                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
+                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
+                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
+
+                <div class="sched-time">18:00 - 19:00</div>
+                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
+                <div class="sched-cell yoga"><div class="name">Yoga</div><div class="trainer">Rina</div></div>
+                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
+                <div class="sched-cell zumba"><div class="name">Zumba</div><div class="trainer">Sari</div></div>
+                <div class="sched-cell pilates"><div class="name">Pilates</div><div class="trainer">Dewi</div></div>
+                <div class="sched-cell spinning"><div class="name">Spinning</div><div class="trainer">Doni</div></div>
+                <div class="sched-cell hiit"><div class="name">HIIT</div><div class="trainer">Budi</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TRAINER ==================== -->
+    <section class="section" id="tab-trainer">
+        <div class="section-title">Trainer Kami</div>
+        <div class="section-sub">Kenalan dengan trainer profesional IronFit Gym</div>
+
+        <div class="trainer-grid">
+            <div class="trainer-card">
+                <div class="trainer-avatar">AB</div>
+                <h3>Adi Baskoro</h3>
+                <div class="spec">Angkat Beban & Powerlifting</div>
+                <p>Bersertifikat ISSA, 8 tahun pengalaman. Spesialis pembentukan otot dan kekuatan.</p>
+            </div>
+            <div class="trainer-card">
+                <div class="trainer-avatar">RS</div>
+                <h3>Rina Setiawati</h3>
+                <div class="spec">Yoga & Pilates</div>
+                <p>Yoga Alliance certified, 6 tahun mengajar. Ahli fleksibilitas dan keseimbangan tubuh.</p>
+            </div>
+            <div class="trainer-card">
+                <div class="trainer-avatar">BH</div>
+                <h3>Budi Hartono</h3>
+                <div class="spec">HIIT & Cardio</div>
+                <p>Bersertifikat ACE, 5 tahun pengalaman. Spesialis program pembakaran lemak intensitas tinggi.</p>
+            </div>
+            <div class="trainer-card">
+                <div class="trainer-avatar">SP</div>
+                <h3>Sari Permata</h3>
+                <div class="spec">Zumba & Dance Fitness</div>
+                <p>Instruktur Zumba resmi, 4 tahun pengalaman. Membakar kalori sambil bersenang-senang.</p>
+            </div>
+            <div class="trainer-card">
+                <div class="trainer-avatar">DP</div>
+                <h3>Dewi Pratiwi</h3>
+                <div class="spec">Pilates & Rehab</div>
+                <p>Bersertifikat BODY, 5 tahun pengalaman. Spesialis postur tubuh dan pemulihan cedera.</p>
+            </div>
+            <div class="trainer-card">
+                <div class="trainer-avatar">DW</div>
+                <h3>Doni Wijaya</h3>
+                <div class="spec">Spinning & Cycling</div>
+                <p>Bersertifikat Schwinn, 4 tahun pengalaman. Kelas spinning intens dengan motivasi tinggi.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== HARGA ==================== -->
+    <section class="section" id="tab-harga">
+        <div class="section-title">Paket Membership</div>
+        <div class="section-sub">Pilih paket yang sesuai dengan kebutuhanmu</div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Basic</h3>
+                <div class="price">Rp 200<span>rb</span></div>
+                <div class="period">/bulan</div>
+                <ul>
+                    <li>Akses gym 06:00 - 22:00</li>
+                    <li>Alat gym standar</li>
+                    <li>1x free gym tour</li>
+                    <li>Loker harian</li>
+                </ul>
+                <button class="btn" style="width:100%" onclick="switchTab('daftar')">Pilih Paket</button>
+            </div>
+            <div class="pricing-card featured">
+                <h3>Premium</h3>
+                <div class="price">Rp 350<span>rb</span></div>
+                <div class="period">/bulan</div>
+                <ul>
+                    <li>Akses 24 jam penuh</li>
+                    <li>Semua alat gym</li>
+                    <li>Kelas grup gratis</li>
+                    <li>1x personal training</li>
+                    <li>Loker VIP + handuk</li>
+                </ul>
+                <button class="btn" style="width:100%" onclick="switchTab('daftar')">Pilih Paket</button>
+            </div>
+            <div class="pricing-card">
+                <h3>VIP</h3>
+                <div class="price">Rp 500<span>rb</span></div>
+                <div class="period">/bulan</div>
+                <ul>
+                    <li>Akses 24 jam penuh</li>
+                    <li>Semua alat + area VIP</li>
+                    <li>Semua kelas gratis</li>
+                    <li>4x personal training</li>
+                    <li>Loker premium + handuk + protein</li>
+                    <li>Konsultasi gizi</li>
+                </ul>
+                <button class="btn" style="width:100%" onclick="switchTab('daftar')">Pilih Paket</button>
+            </div>
+            <div class="pricing-card">
+                <h3>Tahunan</h3>
+                <div class="price">Rp 2<span>jt</span></div>
+                <div class="period">/tahun (hemat 17%)</div>
+                <ul>
+                    <li>Akses 24 jam penuh</li>
+                    <li>Semua alat gym</li>
+                    <li>Semua kelas gratis</li>
+                    <li>2x personal training/bulan</li>
+                    <li>Loker VIP + handuk</li>
+                    <li>Konsultasi gizi 2x</li>
+                    <li>Free merchandise</li>
+                </ul>
+                <button class="btn" style="width:100%" onclick="switchTab('daftar')">Pilih Paket</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== KONTAK ==================== -->
+    <section class="section" id="tab-kontak">
+        <div class="section-title">Kontak & Lokasi</div>
+        <div class="section-sub">Hubungi kami atau datang langsung ke gym</div>
+
+        <div class="contact-grid">
+            <div class="panel">
+                <h2>Informasi Kontak</h2>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="icon">📍</div>
+                        <div>
+                            <div class="label">Alamat</div>
+                            <div class="value">Jl. Merdeka No. 123, Jakarta Pusat</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="icon">📞</div>
+                        <div>
+                            <div class="label">Telepon</div>
+                            <div class="value">(021) 1234-5678</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="icon">📱</div>
+                        <div>
+                            <div class="label">WhatsApp</div>
+                            <div class="value">+62 812-3456-7890</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="icon">✉️</div>
+                        <div>
+                            <div class="label">Email</div>
+                            <div class="value">info@ironfitgym.com</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="icon">🕐</div>
+                        <div>
+                            <div class="label">Jam Operasional</div>
+                            <div class="value">Senin - Minggu: 24 Jam</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="icon">📷</div>
+                        <div>
+                            <div class="label">Instagram</div>
+                            <div class="value">@ironfitgym</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <h2>Lokasi</h2>
+                <div class="map-placeholder">
+                    <div style="text-align:center">
+                        <div style="font-size:40px; margin-bottom:8px;">🗺️</div>
+                        <p>Peta Google Maps akan tampil di sini</p>
+                        <p style="font-size:12px; margin-top:6px;">Jl. Merdeka No. 123, Jakarta Pusat</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    const STORAGE_KEY = 'ironfit_members';
+    const plans = {
+        basic: { label: 'Basic', price: 'Rp 200.000/bulan', promo: 'Diskon 20%', total: 'Rp 160.000' },
+        premium: { label: 'Premium', price: 'Rp 350.000/bulan', promo: 'Diskon 20%', total: 'Rp 280.000' },
+        vip: { label: 'VIP', price: 'Rp 500.000/bulan', promo: 'Diskon 20%', total: 'Rp 400.000' },
+        tahunan: { label: 'Tahunan', price: 'Rp 2.000.000/tahun', promo: 'Diskon 20%', total: 'Rp 1.600.000' },
+    };
+
+    function getMembers() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+        catch { return []; }
+    }
+
+    function saveMembers(members) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
+    }
+
+    // Tab switching
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    function switchTab(tab) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
+        const section = document.getElementById('tab-' + tab);
+        const btn = document.querySelector(`[data-tab="${tab}"]`);
+        if (section) section.classList.add('active');
+        if (btn) btn.classList.add('active');
+        if (tab === 'member') renderMembers();
+    }
+
+    // Form
+    function updateSummary() {
+        const m = document.getElementById('membership').value;
+        const plan = plans[m];
+        document.getElementById('s-plan').textContent = plan ? plan.price : '-';
+        document.getElementById('s-promo').textContent = plan ? plan.promo : '-';
+        document.getElementById('s-total').textContent = plan ? plan.total : '-';
+    }
+
+    document.getElementById('regForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(this));
+        if (!data.membership) return alert('Pilih paket membership!');
+
+        const members = getMembers();
+        const newMember = {
+            id: Date.now(),
+            nama: data.nama,
+            email: data.email,
+            telepon: data.telepon,
+            tglLahir: data.tglLahir,
+            gender: data.gender,
+            membership: data.membership,
+            tujuan: data.tujuan || '-',
+            alamat: data.alamat || '-',
+            status: 'Aktif',
+            createdAt: new Date().toLocaleString('id-ID'),
+        };
+        members.push(newMember);
+        saveMembers(members);
+
+        this.style.display = 'none';
+        document.getElementById('formPanel').querySelector('h2').style.display = 'none';
+        document.getElementById('successState').classList.add('show');
+    });
+
+    function resetForm() {
+        document.getElementById('regForm').reset();
+        document.getElementById('regForm').style.display = 'flex';
+        document.getElementById('formPanel').querySelector('h2').style.display = 'block';
+        document.getElementById('successState').classList.remove('show');
+        updateSummary();
+    }
+
+    // Member table
+    function renderMembers() {
+        const tbody = document.getElementById('memberBody');
+        const empty = document.getElementById('emptyState');
+        const search = document.getElementById('searchMember').value.toLowerCase();
+        const members = getMembers();
+
+        const filtered = members.filter(m => m.nama.toLowerCase().includes(search));
+        tbody.innerHTML = '';
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '';
+            empty.style.display = 'block';
+            return;
+        }
+        empty.style.display = 'none';
+
+        filtered.forEach((m, i) => {
+            const planLabel = plans[m.membership] ? plans[m.membership].label : m.membership;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${i + 1}</td>
+                <td><strong>${m.nama}</strong></td>
+                <td>${m.email}</td>
+                <td>${m.telepon}</td>
+                <td>${planLabel}</td>
+                <td><span class="badge-status active">${m.status}</span></td>
+                <td>
+                    <button class="btn-sm danger" onclick="deleteMember(${m.id})">Hapus</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function deleteMember(id) {
+        if (!confirm('Hapus member ini?')) return;
+        let members = getMembers();
+        members = members.filter(m => m.id !== id);
+        saveMembers(members);
+        renderMembers();
+    }
+
+    function clearAllMembers() {
+        if (!confirm('Hapus semua data member?')) return;
+        saveMembers([]);
+        renderMembers();
+    }
+</script>
+
+</body>
+</html>
