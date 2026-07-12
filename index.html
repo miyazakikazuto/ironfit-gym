@@ -67,6 +67,7 @@
             display: flex;
             gap: 4px;
             flex-wrap: wrap;
+            position: relative;
         }
         .nav-links button {
             background: transparent;
@@ -79,9 +80,20 @@
             font-weight: 600;
             transition: 0.15s;
             font-family: var(--font);
+            position: relative;
+            z-index: 1;
         }
         .nav-links button:hover { color: var(--text); background: var(--panel-2); }
-        .nav-links button.active { color: #fff; background: var(--accent); }
+        .nav-links button.active { color: #fff; }
+        .nav-indicator {
+            position: absolute; top: 0; bottom: 0;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 6px 18px rgba(255,77,77,0.3);
+            left: 0; width: 0;
+            z-index: 0; pointer-events: none;
+            transition: left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1);
+        }
 
         .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
 
@@ -340,6 +352,7 @@
         <span>IronFit Gym</span>
     </div>
     <div class="nav-links">
+        <span class="nav-indicator" id="navIndicator"></span>
         <button class="active" data-tab="home">Beranda</button>
         <button data-tab="daftar">Daftar</button>
         <button data-tab="trainer">Trainer</button>
@@ -643,7 +656,17 @@
         const btn = document.querySelector(`[data-tab="${tab}"]`);
         if (section) section.classList.add('active');
         if (btn) btn.classList.add('active');
+        moveIndicator(btn);
     }
+
+    function moveIndicator(btn) {
+        const ind = document.getElementById('navIndicator');
+        if (!btn || !ind) return;
+        ind.style.left = btn.offsetLeft + 'px';
+        ind.style.width = btn.offsetWidth + 'px';
+    }
+    window.addEventListener('load', () => moveIndicator(document.querySelector('.nav-links button.active')));
+    window.addEventListener('resize', () => moveIndicator(document.querySelector('.nav-links button.active')));
 
     // Form
     function updateSummary() {
