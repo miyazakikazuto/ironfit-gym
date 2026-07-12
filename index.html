@@ -415,16 +415,6 @@
                             <input type="date" id="tgl-lahir" name="tglLahir" required>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="field">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" placeholder="contoh@email.com" required>
-                        </div>
-                        <div class="field">
-                            <label for="telepon">No. Telepon</label>
-                            <input type="tel" id="telepon" name="telepon" placeholder="08xxxxxxxxxx" required>
-                        </div>
-                    </div>
                     <div>
                         <label>Jenis Kelamin</label>
                         <div class="radio">
@@ -662,8 +652,6 @@
         const wajib = [
             ['nama', 'Nama Lengkap'],
             ['tglLahir', 'Tanggal Lahir'],
-            ['email', 'Email'],
-            ['telepon', 'No. Telepon'],
             ['gender', 'Jenis Kelamin'],
             ['membership', 'Paket Membership'],
             ['tujuan', 'Tujuan Fitness'],
@@ -675,18 +663,12 @@
                 return;
             }
         }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-            alert('Format email tidak valid');
-            return;
-        }
 
         const planLabel = plans[data.membership] ? plans[data.membership].label : data.membership;
         const msg =
 `Halo IronFit, saya mau daftar member:
 Nama: ${data.nama}
 Tanggal Lahir: ${data.tglLahir}
-Email: ${data.email}
-Telepon: ${data.telepon}
 Gender: ${data.gender}
 Paket: ${planLabel}
 Tujuan: ${data.tujuan}
