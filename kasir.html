@@ -177,18 +177,21 @@ document.getElementById('saveBtn').addEventListener('click', () => {
     formMsg.textContent = 'Format tanggal salah (DD/MM/YYYY)'; formMsg.className = 'msg err'; return;
   }
   const tglFinal = tglVal || todayDDMMYYYY();
-  const qs = new URLSearchParams({
+  const payload = {
     token: TOKEN,
-    action: 'add',
     nama: nama,
     paket: paket.value,
     nominal: nominal.value || '0',
     metode: document.getElementById('metode').value,
     tanggal: tglFinal,
     catatan: document.getElementById('catatan').value.trim()
-  }).toString();
+  };
   formMsg.textContent = 'Menyimpan...'; formMsg.className = 'msg';
-  fetch(API + '?' + qs)
+  fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  })
   .then(r => r.json())
   .then(res => {
     if (res.ok) { formMsg.textContent = 'Tersimpan ✓'; formMsg.className = 'msg ok'; resetForm(); loadHistory(); }
