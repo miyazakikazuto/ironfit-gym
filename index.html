@@ -429,17 +429,6 @@
                         </select>
                     </div>
                     <div class="field">
-                        <label for="tujuan">Tujuan Fitness</label>
-                        <select id="tujuan" name="tujuan" required>
-                            <option value="" disabled selected>Pilih Tujuan</option>
-                            <option value="Menurunkan Berat Badan">Menurunkan Berat Badan</option>
-                            <option value="Meningkatkan Massa Otot">Meningkatkan Massa Otot</option>
-                            <option value="Kesehatan Umum">Kesehatan Umum</option>
-                            <option value="Meningkatkan Stamina">Meningkatkan Stamina</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                    </div>
-                    <div class="field">
                         <label for="alamat">Alamat</label>
                         <textarea id="alamat" name="alamat" placeholder="Alamat lengkap" required></textarea>
                     </div>
@@ -646,7 +635,6 @@
             ['tglLahir', 'Tanggal Lahir'],
             ['gender', 'Jenis Kelamin'],
             ['membership', 'Paket Membership'],
-            ['tujuan', 'Tujuan Fitness'],
             ['alamat', 'Alamat'],
         ];
         for (const [key, label] of wajib) {
@@ -663,7 +651,6 @@ Nama: ${data.nama}
 Tanggal Lahir: ${data.tglLahir}
 Gender: ${data.gender}
 Paket: ${planLabel}
-Tujuan: ${data.tujuan}
 Alamat: ${data.alamat}`;
 
         window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
