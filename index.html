@@ -77,8 +77,6 @@
             display: flex;
             align-items: center;
         }
-        .nav-links-wrap::before,
-        .nav-links-wrap::after { display: none; }
         .nav-links button {
             background: transparent;
             border: none;
@@ -338,16 +336,6 @@
             }
             .nav-links::-webkit-scrollbar { display: none; }
             .nav-links button { white-space: nowrap; }
-            .nav-links-wrap::before,
-            .nav-links-wrap::after {
-                display: block; position: absolute; top: 50%; transform: translateY(-50%);
-                font-size: 18px; font-weight: 300; color: var(--muted); pointer-events: none; z-index: 2;
-            }
-            .nav-links-wrap::before { display: none; }
-            .nav-links-wrap::after {
-                content: '|'; right: 0; width: 24px; text-align: right;
-                background: linear-gradient(to left, var(--bg) 40%, transparent);
-            }
             .nav-links { padding: 0 18px; }
             .row { grid-template-columns: 1fr; }
             .contact-grid { grid-template-columns: 1fr; }
