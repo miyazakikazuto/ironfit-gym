@@ -8,13 +8,14 @@
 // 4. Copy URL web app ke konstanta API di kasir.html (dan TOKEN harus sama).
 
 const TOKEN = 'ironfit_kasir_2024';
+const SPREADSHEET_ID = '1-PRK7z6G_Tb_GBgknG__iG7hLJ0YjGbqfZ-UzZM5xZg';
 
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
     if (data.token !== TOKEN) return json({ error: 'unauthorized' });
 
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Transaksi');
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('Transaksi');
     if (!sheet) return json({ error: 'sheet Transaksi tidak ditemukan' });
 
     sheet.appendRow([
@@ -36,7 +37,7 @@ function doGet(e) {
   try {
     if (e.parameter.token !== TOKEN) return json({ error: 'unauthorized' });
 
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Transaksi');
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('Transaksi');
     if (!sheet) return json({ error: 'sheet Transaksi tidak ditemukan' });
 
     const last = sheet.getLastRow();
