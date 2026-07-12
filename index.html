@@ -337,6 +337,14 @@
             .nav-links::-webkit-scrollbar { display: none; }
             .nav-links button { white-space: nowrap; }
             .nav-links { padding: 0 18px; }
+            .nav-links-wrap::after {
+                content: '';
+                position: absolute; top: 0; bottom: 0; right: 0;
+                width: 40px; pointer-events: none; z-index: 2;
+                background: linear-gradient(to left, rgba(22,22,26,0.92), transparent);
+                opacity: 0; transition: opacity .2s;
+            }
+            .nav-links-wrap.can-scroll-right::after { opacity: 1; }
             .row { grid-template-columns: 1fr; }
             .contact-grid { grid-template-columns: 1fr; }
             .hero { padding: 30px 10px 20px; }
@@ -658,6 +666,22 @@
         const btn = document.querySelector(`[data-tab="${tab}"]`);
         if (section) section.classList.add('active');
         if (btn) btn.classList.add('active');
+    }
+
+    // Nav fade edge indicator
+    const navWrap = document.querySelector('.nav-links-wrap');
+    const navLinks = document.querySelector('.nav-links');
+    function updateNavFade() {
+        if (!navWrap || !navLinks) return;
+        const canRight = navLinks.scrollWidth - (navLinks.scrollLeft + navLinks.clientWidth) > 1;
+        navWrap.classList.toggle('can-scroll-right', canRight);
+    }
+    if (navLinks) {
+        navLinks.addEventListener('scroll', updateNavFade, { passive: true });
+        window.addEventListener('resize', updateNavFade);
+        window.addEventListener('load', updateNavFade);
+        requestAnimationFrame(updateNavFade);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateNavFade);
     }
 
     // Form
