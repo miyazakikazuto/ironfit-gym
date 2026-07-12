@@ -40,6 +40,19 @@ function doGet(e) {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('Transaksi');
     if (!sheet) return json({ error: 'sheet Transaksi tidak ditemukan' });
 
+    if (e.parameter.action === 'add') {
+      sheet.appendRow([
+        new Date(),
+        e.parameter.nama || '',
+        e.parameter.paket || '',
+        Number(e.parameter.nominal) || 0,
+        e.parameter.metode || '',
+        e.parameter.tanggal || '',
+        e.parameter.catatan || ''
+      ]);
+      return json({ ok: true });
+    }
+
     const last = sheet.getLastRow();
     const limit = 200;
     const start = Math.max(2, last - limit + 1);
