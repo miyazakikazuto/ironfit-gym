@@ -613,8 +613,9 @@
     };
 
     // Tab switching
-    document.querySelectorAll('[data-tab]').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-tab]');
+        if (btn) switchTab(btn.dataset.tab);
     });
 
     function switchTab(tab) {
