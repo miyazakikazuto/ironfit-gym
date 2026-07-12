@@ -403,7 +403,7 @@
                         </div>
                         <div class="field">
                             <label for="tgl-lahir">Tanggal Lahir</label>
-                            <input type="date" id="tgl-lahir" name="tglLahir" required>
+                            <input type="text" id="tgl-lahir" name="tglLahir" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" required>
                         </div>
                     </div>
                     <div class="field">
@@ -613,6 +613,16 @@
 
     const WA_NUMBER = '6285842851310';
 
+    const tglInput = document.getElementById('tgl-lahir');
+    if (tglInput) {
+        tglInput.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+            if (v.length >= 5) v = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4);
+            else if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
+            e.target.value = v;
+        });
+    }
+
     document.getElementById('regForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(this));
@@ -630,10 +640,12 @@
             }
         }
 
+        const tglFormatted = data.tglLahir || '';
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(tglFormatted)) {
+            alert('Mohon isi Tanggal Lahir dengan format DD/MM/YYYY');
+            return;
+        }
         const planLabel = plans[data.membership] ? plans[data.membership].label : data.membership;
-        const tglRaw = data.tglLahir || '';
-        const tglParts = tglRaw.split('-');
-        const tglFormatted = tglParts.length === 3 ? `${tglParts[2]}/${tglParts[1]}/${tglParts[0]}` : tglRaw;
         const msg =
 `Halo IronFit, saya mau daftar member:
 Nama: ${data.nama}
