@@ -72,7 +72,7 @@
             background: transparent;
             border: none;
             color: var(--muted);
-            padding: 8px 14px;
+            padding: 10px 16px; min-height: 44px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
@@ -192,7 +192,7 @@
         .field { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 4px; }
         input, select, textarea {
             width: 100%; padding: 12px 14px; background: transparent; border: none;
-            color: var(--text); font-size: 15px; outline: none; font-family: var(--font);
+            color: var(--text); font-size: 16px; outline: none; font-family: var(--font);
             color-scheme: dark;
         }
         input::placeholder { color: #6b6f78; }
@@ -314,11 +314,21 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 760px) {
-            .navbar { flex-direction: column; gap: 8px; }
-            .nav-links { justify-content: center; }
+            .navbar { flex-wrap: nowrap; }
+            .nav-links {
+                flex: 1; min-width: 0;
+                justify-content: flex-start;
+                overflow-x: auto; flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .nav-links::-webkit-scrollbar { display: none; }
+            .nav-links button { white-space: nowrap; }
             .row { grid-template-columns: 1fr; }
             .contact-grid { grid-template-columns: 1fr; }
             .hero { padding: 30px 10px 20px; }
+            .hero .btn { display: block; width: 100%; }
+            .hero .btn-outline { margin-left: 0; margin-top: 12px; }
         }
     </style>
 </head>
