@@ -406,19 +406,6 @@
                             <input type="date" id="tgl-lahir" name="tglLahir" required>
                         </div>
                     </div>
-                    <div>
-                        <label>Jenis Kelamin</label>
-                        <div class="radio">
-                            <div class="chip">
-                                <input type="radio" name="gender" value="Laki-laki" id="g-l" required>
-                                <label for="g-l">♂ Laki-laki</label>
-                            </div>
-                            <div class="chip">
-                                <input type="radio" name="gender" value="Perempuan" id="g-p">
-                                <label for="g-p">♀ Perempuan</label>
-                            </div>
-                        </div>
-                    </div>
                     <div class="field">
                         <label for="membership">Pilih Membership</label>
                         <select id="membership" name="membership" onchange="updateSummary()" required>
@@ -633,7 +620,6 @@
         const wajib = [
             ['nama', 'Nama Lengkap'],
             ['tglLahir', 'Tanggal Lahir'],
-            ['gender', 'Jenis Kelamin'],
             ['membership', 'Paket Membership'],
             ['alamat', 'Alamat'],
         ];
@@ -652,7 +638,6 @@
 `Halo IronFit, saya mau daftar member:
 Nama: ${data.nama}
 Tanggal Lahir: ${tglFormatted}
-Gender: ${data.gender}
 Paket: ${planLabel}
 Alamat: ${data.alamat}`;
 
