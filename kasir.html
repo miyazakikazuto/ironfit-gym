@@ -215,10 +215,10 @@ function loadHistory() {
     .then(res => {
       const rows = res.rows || [];
       const f = document.getElementById('filterTanggal').value.trim();
-      const shown = (f ? rows.filter(r => r.tanggal === f) : rows).slice().reverse();
+      const shown = (f ? rows.filter(r => fmtTgl(r.tanggal) === f) : rows).slice().reverse();
       historyBody.innerHTML = shown.map(r => {
         const nom = Number(r.nominal || 0);
-        return '<tr><td>' + esc(r.tanggal) + '</td><td>' + esc(r.nama) + '</td><td>' + esc(r.paket) +
+        return '<tr><td>' + esc(fmtTgl(r.tanggal)) + '</td><td>' + esc(r.nama) + '</td><td>' + esc(r.paket) +
           '</td><td>Rp ' + nom.toLocaleString('id-ID') + '</td><td>' + esc(r.metode) + '</td><td>' + esc(r.catatan) + '</td></tr>';
       }).join('');
       const total = shown.reduce((s, r) => s + Number(r.nominal || 0), 0);
@@ -229,6 +229,15 @@ function loadHistory() {
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+function fmtTgl(t) {
+  if (typeof t === 'string' && t.indexOf('T') > -1) {
+    const d = new Date(t);
+    const wib = new Date(d.getTime() + 7 * 3600 * 1000);
+    const p = n => String(n).padStart(2, '0');
+    return p(wib.getUTCDate()) + '/' + p(wib.getUTCMonth() + 1) + '/' + wib.getUTCFullYear();
+  }
+  return t || '';
 }
 </script>
 </body>
