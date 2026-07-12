@@ -19,6 +19,8 @@
             --muted: #9aa3b2;
             --accent: #ff4d4d;
             --accent-2: #ff8c42;
+            --nav-active: #7c3aed;
+            --nav-active-2: #a855f7;
             --border: #27272f;
             --ok: #2dd4a8;
             --warn: #facc15;
@@ -96,8 +98,8 @@
         .nav-indicator {
             position: absolute; top: 0; bottom: 0;
             border-radius: 8px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            box-shadow: 0 6px 18px rgba(255,77,77,0.3);
+            background: linear-gradient(135deg, var(--nav-active), var(--nav-active-2));
+            box-shadow: 0 6px 18px rgba(124,58,237,0.35);
             left: 0; width: 0;
             z-index: 0; pointer-events: none;
             transition: left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1);
@@ -684,8 +686,11 @@
     function moveIndicator(btn) {
         const ind = document.getElementById('navIndicator');
         if (!btn || !ind) return;
-        ind.style.left = btn.offsetLeft + 'px';
-        ind.style.width = btn.offsetWidth + 'px';
+        const wrap = btn.closest('.nav-links');
+        const base = wrap.getBoundingClientRect();
+        const r = btn.getBoundingClientRect();
+        ind.style.left = (r.left - base.left) + 'px';
+        ind.style.width = r.width + 'px';
     }
     function positionIndicator() {
         moveIndicator(document.querySelector('.nav-links button.active'));
@@ -693,7 +698,10 @@
     document.addEventListener('DOMContentLoaded', positionIndicator);
     window.addEventListener('load', positionIndicator);
     window.addEventListener('resize', positionIndicator);
-    requestAnimationFrame(positionIndicator);
+    requestAnimationFrame(() => requestAnimationFrame(positionIndicator));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(positionIndicator);
+    setTimeout(positionIndicator, 60);
+    setTimeout(positionIndicator, 250);
 
     // Form
     function updateSummary() {
