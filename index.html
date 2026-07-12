@@ -39,7 +39,7 @@
         .navbar {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
             padding: 12px 24px;
             background: rgba(22,22,26,0.92);
             border-bottom: 1px solid var(--border);
@@ -64,37 +64,24 @@
             font-size: 18px;
             box-shadow: 0 6px 18px rgba(255,77,77,0.3);
         }
-        .nav-links {
+        .bottom-nav {
+            position: fixed; left: 0; right: 0; bottom: 0; z-index: 100;
             display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-            position: relative;
+            background: rgba(22,22,26,0.96);
+            border-top: 1px solid var(--border);
+            padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
         }
-        .nav-links-wrap {
-            position: relative;
+        .bottom-nav button {
             flex: 1;
-            min-width: 0;
-            display: flex;
-            align-items: center;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            background: none; border: none; cursor: pointer; font-family: var(--font);
+            color: var(--muted); font-size: 11px; font-weight: 600;
+            padding: 6px 0; min-height: 44px;
         }
-        .nav-links button {
-            background: transparent;
-            border: none;
-            color: var(--muted);
-            padding: 10px 16px; min-height: 44px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: 0.15s;
-            font-family: var(--font);
-            position: relative;
-            z-index: 1;
-        }
-        .nav-links button:hover { color: var(--text); background: var(--panel-2); }
-        .nav-links button.active { color: #fff; background: linear-gradient(135deg, var(--nav-active), var(--nav-active-2)); box-shadow: 0 4px 14px rgba(124,58,237,0.35); }
+        .bottom-nav .bi { font-size: 20px; line-height: 1; }
+        .bottom-nav button.active { color: var(--nav-active-2); }
 
-        .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+        .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; padding-bottom: 88px; }
 
         .section { display: none; }
         .section.active { display: block; }
@@ -325,26 +312,6 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 760px) {
-            .navbar { flex-wrap: nowrap; }
-            .nav-links-wrap { margin-left: 12px; }
-            .nav-links {
-                min-width: 0;
-                justify-content: flex-start;
-                overflow-x: auto; flex-wrap: nowrap;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-            }
-            .nav-links::-webkit-scrollbar { display: none; }
-            .nav-links button { white-space: nowrap; }
-            .nav-links { padding: 0 18px; }
-            .nav-links-wrap::after {
-                content: '';
-                position: absolute; top: 0; bottom: 0; right: 0;
-                width: 22px; pointer-events: none; z-index: 2;
-                background: linear-gradient(to left, rgba(240,240,245,0.22), transparent);
-                opacity: 0; transition: opacity .2s;
-            }
-            .nav-links-wrap.can-scroll-right::after { opacity: 1; }
             .row { grid-template-columns: 1fr; }
             .contact-grid { grid-template-columns: 1fr; }
             .hero { padding: 30px 10px 20px; }
@@ -359,15 +326,6 @@
     <div class="nav-brand">
         <div class="logo">💪</div>
         <span>IronFit Gym</span>
-    </div>
-    <div class="nav-links-wrap">
-        <div class="nav-links">
-            <button class="active" data-tab="home">Beranda</button>
-            <button data-tab="daftar">Daftar</button>
-            <button data-tab="trainer">Trainer</button>
-            <button data-tab="harga">Harga</button>
-            <button data-tab="kontak">Kontak</button>
-        </div>
     </div>
 </nav>
 
@@ -668,22 +626,6 @@
         if (btn) btn.classList.add('active');
     }
 
-    // Nav fade edge indicator
-    const navWrap = document.querySelector('.nav-links-wrap');
-    const navLinks = document.querySelector('.nav-links');
-    function updateNavFade() {
-        if (!navWrap || !navLinks) return;
-        const canRight = navLinks.scrollWidth - (navLinks.scrollLeft + navLinks.clientWidth) > 1;
-        navWrap.classList.toggle('can-scroll-right', canRight);
-    }
-    if (navLinks) {
-        navLinks.addEventListener('scroll', updateNavFade, { passive: true });
-        window.addEventListener('resize', updateNavFade);
-        window.addEventListener('load', updateNavFade);
-        requestAnimationFrame(updateNavFade);
-        if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateNavFade);
-    }
-
     // Form
     function updateSummary() {
         const m = document.getElementById('membership').value;
@@ -739,7 +681,15 @@ Alamat: ${data.alamat}`;
     }
 
 
-</script>
+    </script>
+
+<nav class="bottom-nav">
+    <button class="active" data-tab="home"><span class="bi">🏠</span><span>Beranda</span></button>
+    <button data-tab="daftar"><span class="bi">📝</span><span>Daftar</span></button>
+    <button data-tab="trainer"><span class="bi">💪</span><span>Trainer</span></button>
+    <button data-tab="harga"><span class="bi">💰</span><span>Harga</span></button>
+    <button data-tab="kontak"><span class="bi">☎️</span><span>Kontak</span></button>
+</nav>
 
 </body>
 </html>
