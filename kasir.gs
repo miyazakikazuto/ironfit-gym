@@ -27,6 +27,7 @@ function doPost(e) {
       data.tanggal || '',
       data.catatan || ''
     ]);
+    sheet.getRange(sheet.getLastRow(), 6).setNumberFormat('@').setValue(data.tanggal || '');
     return json({ ok: true });
   } catch (err) {
     return json({ error: String(err) });
@@ -50,6 +51,7 @@ function doGet(e) {
         e.parameter.tanggal || '',
         e.parameter.catatan || ''
       ]);
+      sheet.getRange(sheet.getLastRow(), 6).setNumberFormat('@').setValue(e.parameter.tanggal || '');
       return json({ ok: true });
     }
 
