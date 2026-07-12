@@ -688,8 +688,13 @@
         ind.style.left = btn.offsetLeft + 'px';
         ind.style.width = btn.offsetWidth + 'px';
     }
-    window.addEventListener('load', () => moveIndicator(document.querySelector('.nav-links button.active')));
-    window.addEventListener('resize', () => moveIndicator(document.querySelector('.nav-links button.active')));
+    function positionIndicator() {
+        moveIndicator(document.querySelector('.nav-links button.active'));
+    }
+    document.addEventListener('DOMContentLoaded', positionIndicator);
+    window.addEventListener('load', positionIndicator);
+    window.addEventListener('resize', positionIndicator);
+    requestAnimationFrame(positionIndicator);
 
     // Form
     function updateSummary() {
