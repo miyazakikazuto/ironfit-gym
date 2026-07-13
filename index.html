@@ -335,10 +335,10 @@
         /* ===== FLOATING WA ===== */
         .wa-float {
             position: fixed; right: 16px; bottom: calc(84px + env(safe-area-inset-bottom));
-            z-index: 90; display: flex; align-items: center; gap: 8px;
-            padding: 12px 16px; border-radius: 999px;
+            z-index: 90; display: flex; align-items: center; justify-content: center;
+            width: 56px; height: 56px; border-radius: 50%;
             background: linear-gradient(135deg, #25D366, #1ebe5d); color: #fff;
-            font-weight: 700; font-size: 14px; text-decoration: none;
+            text-decoration: none;
             box-shadow: 0 10px 25px rgba(37,211,102,.4); transition: transform .15s;
         }
         .wa-float:hover { transform: translateY(-2px); }
@@ -728,9 +728,8 @@ Alamat : ${data.alamat}`;
     <button data-tab="kontak"><span class="bi"><svg class="ic"><use href="#i-phone"/></svg></span><span>Kontak</span></button>
 </nav>
 
-    <a class="wa-float" href="https://wa.me/6285842851310?text=Halo%20IronFit%20Gym%2C%20saya%20mau%20tanya%20tentang%20member." target="_blank" rel="noopener">
-        <svg class="ic" style="width:20px;height:20px;color:#fff"><use href="#i-whatsapp"/></svg>
-        <span>Chat WA</span>
+    <a class="wa-float" href="https://wa.me/6285842851310" target="_blank" rel="noopener" aria-label="Chat WhatsApp">
+        <svg class="ic" style="width:24px;height:24px;color:#fff"><use href="#i-whatsapp"/></svg>
     </a>
 
 </body>
