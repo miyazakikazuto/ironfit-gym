@@ -1,7 +1,7 @@
 // kasir.gs — Google Apps Script untuk IronFit Kasir
 // Cara pakai:
 // 1. Buat Google Spreadsheet baru, buat sheet bernama "Transaksi" (baris 1 = header:
-//    Waktu | Nama | Paket | Nominal | Metode | Tanggal | Catatan)
+//    Waktu | Nama | Paket | Nominal | Metode | Tanggal | Catatan | ID)
 // 2. Extensions > Apps Script, paste kode ini, ganti TOKEN jika perlu.
 // 3. Deploy > New deployment > type Web app,
 //    Execute as: Me, Who has access: Anyone.
@@ -70,7 +70,7 @@ function doGet(e) {
     }
 
     const last = sheet.getLastRow();
-    const limit = 200;
+    const limit = 1000;
     const start = Math.max(2, last - limit + 1);
     const rows = last < 2 ? [] : sheet.getRange(start, 1, last - start + 1, 8).getValues();
 

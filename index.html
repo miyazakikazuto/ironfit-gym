@@ -487,7 +487,7 @@
 
                 <div class="success" id="successState">
                     <div class="icon"><svg class="ic"><use href="#i-check"/></svg></div>
-                    <h3>Pendaftaran Dikirim</h3>
+                    <h3>Pesan Disiapkan</h3>
                     <p>Pesan WhatsApp sudah kami buatkan. Klik tombol kirim di WhatsApp untuk konfirmasi pendaftaranmu.</p>
                     <button class="cta" style="margin-top:14px" onclick="resetForm()">Daftar Lagi</button>
                 </div>
@@ -588,32 +588,32 @@
                         <div class="icon"><svg class="ic"><use href="#i-map-pin"/></svg></div>
                         <div>
                             <div class="label">Alamat</div>
-                            <div class="value">Jl. Merdeka No. 123, Jakarta Pusat</div>
+                            <div class="value"><a href="https://www.google.com/maps/search/?api=1&query=Jl.+Merdeka+No.+123,+Jakarta+Pusat" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">Jl. Merdeka No. 123, Jakarta Pusat</a></div>
                         </div>
                     </div>
                     <div class="contact-item">
                         <div class="icon"><svg class="ic"><use href="#i-phone"/></svg></div>
                         <div>
                             <div class="label">Telepon</div>
-                            <div class="value">(021) 1234-5678</div>
+                            <div class="value"><a href="tel:+622112345678" style="color:inherit;text-decoration:none">(021) 1234-5678</a></div>
                         </div>
                     </div>
                     <div class="contact-item">
                         <div class="icon"><svg class="ic"><use href="#i-whatsapp"/></svg></div>
                         <div>
                             <div class="label">WhatsApp</div>
-                            <div class="value">+62 858-4285-1310</div>
+                            <div class="value"><a href="https://wa.me/6285842851310" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">+62 858-4285-1310</a></div>
                         </div>
                     </div>
                     <div class="contact-item">
                         <div class="icon"><svg class="ic"><use href="#i-mail"/></svg></div>
                         <div>
                             <div class="label">Email</div>
-                            <div class="value">info@ironfitgym.com</div>
+                            <div class="value"><a href="mailto:info@ironfitgym.com" style="color:inherit;text-decoration:none">info@ironfitgym.com</a></div>
                         </div>
                     </div>
                     <div class="contact-item">
-                <div class="icon"><svg class="ic"><use href="#i-clock"/></svg></div>
+                        <div class="icon"><svg class="ic"><use href="#i-clock"/></svg></div>
                         <div>
                             <div class="label">Jam Operasional</div>
                             <div class="value">Senin - Minggu: 07.00 - 21.00</div>
@@ -623,7 +623,7 @@
                         <div class="icon"><svg class="ic"><use href="#i-instagram"/></svg></div>
                         <div>
                             <div class="label">Instagram</div>
-                            <div class="value">@ironfitgym</div>
+                            <div class="value"><a href="https://instagram.com/ironfitgym" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">@ironfitgym</a></div>
                         </div>
                     </div>
                 </div>
@@ -675,9 +675,19 @@
 
     const WA_NUMBER = '6285842851310';
 
+    function isValidWA(s) {
+      const v = s.replace(/\D/g, '');
+      if (v.length < 10 || v.length > 15) return 'No. WA harus 10–15 digit';
+      if (!/^(08|62)/.test(v)) return 'No. WA harus diawali 08 atau 62';
+      return '';
+    }
+
     document.getElementById('regForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(this));
+        const cta = this.querySelector('.cta');
+        cta.disabled = true;
+        cta.textContent = 'Menyiapkan...';
 
         const wajib = [
             ['nama', 'Nama Lengkap'],
@@ -687,9 +697,16 @@
         ];
         for (const [key, label] of wajib) {
             if (!data[key] || String(data[key]).trim() === '') {
+                cta.disabled = false; cta.textContent = 'Daftar Sekarang';
                 alert('Mohon lengkapi: ' + label);
                 return;
             }
+        }
+
+        const waErr = isValidWA(data.nowa);
+        if (waErr) {
+            cta.disabled = false; cta.textContent = 'Daftar Sekarang';
+            alert(waErr); return;
         }
 
         const planLabel = plans[data.membership] ? plans[data.membership].label : data.membership;
@@ -702,7 +719,11 @@ No. WA : ${nowa}
 Paket : ${planLabel}
 Alamat : ${data.alamat}`;
 
-        window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+        const waWin = window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+        if (!waWin) {
+            cta.disabled = false; cta.textContent = 'Daftar Sekarang';
+            alert('Izinkan pop-up untuk membuka WhatsApp'); return;
+        }
 
         this.style.display = 'none';
         document.getElementById('formPanel').querySelector('h2').style.display = 'none';
