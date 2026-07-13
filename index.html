@@ -694,14 +694,13 @@
 
         const planLabel = plans[data.membership] ? plans[data.membership].label : data.membership;
         const nowa = (data.nowa || '').trim();
-        const L = (s) => s.padEnd(12);
         const msg =
 `📋 PENDAFTARAN IRONFIT GYM
 
-${L('Nama')}: ${data.nama}
-${L('No. WA')}: ${nowa}
-${L('Paket')}: ${planLabel}
-${L('Alamat')}: ${data.alamat}`;
+Nama : ${data.nama}
+No. WA : ${nowa}
+Paket : ${planLabel}
+Alamat : ${data.alamat}`;
 
         window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 
