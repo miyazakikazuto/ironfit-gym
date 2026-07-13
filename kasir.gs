@@ -1,7 +1,8 @@
 // kasir.gs — Google Apps Script untuk IronFit Kasir
 // Cara pakai:
-// 1. Buat Google Spreadsheet baru, buat sheet bernama "Transaksi" (baris 1 = header:
-//    Waktu | Nama | Paket | Nominal | Metode | Tanggal | Catatan | ID)
+// 1. Buat Google Spreadsheet, buat 2 sheet:
+//    "Transaksi" (header: Waktu | Nama | Paket | Nominal | Metode | Tanggal | Catatan | ID)
+//    "Member"   (header: Nama | WA | Paket | TglMulai | TglExpired | Status)
 // 2. Extensions > Apps Script, paste kode ini, ganti TOKEN jika perlu.
 // 3. Deploy > New deployment > type Web app,
 //    Execute as: Me, Who has access: Anyone.
@@ -9,6 +10,58 @@
 
 const TOKEN = 'ironfit_kasir_2024';
 const SPREADSHEET_ID = '1-PRK7z6G_Tb_GBgknG__iG7hLJ0YjGbqfZ-UzZM5xZg';
+const DURASI = { Harian: 1, Mingguan: 7, Bulanan: 30 };
+
+function getSheetMember() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sheet = ss.getSheetByName('Member');
+  if (!sheet) {
+    sheet = ss.insertSheet('Member');
+    sheet.appendRow(['Nama', 'WA', 'Paket', 'TglMulai', 'TglExpired', 'Status']);
+  }
+  return sheet;
+}
+
+function updateMember(nama, wa, paket) {
+  const ms = getSheetMember();
+  const md = ms.getDataRange().getValues();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const days = DURASI[paket] || 1;
+  let row = -1;
+
+  for (let i = 1; i < md.length; i++) {
+    if (String(md[i][0]).toLowerCase() === nama.toLowerCase().trim()) {
+      row = i;
+      break;
+    }
+  }
+
+  if (row === -1) {
+    const expired = new Date(today);
+    expired.setDate(expired.getDate() + days);
+    ms.appendRow([nama.trim(), wa || '', paket, today, expired, 'Aktif']);
+  } else {
+    const currentExpired = md[row][4];
+    let start;
+    if (currentExpired && new Date(currentExpired) >= today) {
+      start = new Date(currentExpired);
+    } else {
+      start = new Date(today);
+    }
+    const expired = new Date(start);
+    expired.setDate(expired.getDate() + days);
+    const cellWA = wa || md[row][1];
+    const status = expired >= today ? 'Aktif' : 'Expired';
+    ms.getRange(row + 1, 1, 1, 6).setValues([[nama.trim(), cellWA, paket, today, expired, status]]);
+  }
+}
+
+function isoDate(v) {
+  if (!v) return '';
+  if (typeof v === 'object' && v instanceof Date) return v.toISOString();
+  if (typeof v === 'number') return new Date((v - 25569) * 86400 * 1000).toISOString();
+  return String(v);
+}
 
 function doPost(e) {
   try {
@@ -29,6 +82,7 @@ function doPost(e) {
       String(Date.now())
     ]);
     sheet.getRange(sheet.getLastRow(), 6).setNumberFormat('@').setValue(data.tanggal || '');
+    updateMember(data.nama || '', data.nowa || '', data.paket || '');
     return json({ ok: true });
   } catch (err) {
     return json({ error: String(err) });
@@ -54,6 +108,7 @@ function doGet(e) {
         String(Date.now())
       ]);
       sheet.getRange(sheet.getLastRow(), 6).setNumberFormat('@').setValue(e.parameter.tanggal || '');
+      updateMember(e.parameter.nama || '', e.parameter.nowa || '', e.parameter.paket || '');
       return json({ ok: true });
     }
 
@@ -67,6 +122,27 @@ function doGet(e) {
         }
       }
       return json({ error: 'not found' });
+    }
+
+    if (e.parameter.action === 'cekMember') {
+      const cari = (e.parameter.nama || '').trim().toLowerCase();
+      if (!cari) return json({ ada: false, error: 'nama kosong' });
+      const ms = getSheetMember();
+      const md = ms.getDataRange().getValues();
+      for (let i = 1; i < md.length; i++) {
+        if (String(md[i][0]).toLowerCase() === cari) {
+          const expired = md[i][4];
+          const today = new Date(); today.setHours(0, 0, 0, 0);
+          const status = expired && new Date(expired) >= today ? 'Aktif' : 'Expired';
+          return json({
+            ada: true, nama: md[i][0], wa: md[i][1], paket: md[i][2],
+            tglMulai: isoDate(md[i][3]),
+            tglExpired: isoDate(expired),
+            status: status
+          });
+        }
+      }
+      return json({ ada: false });
     }
 
     const last = sheet.getLastRow();

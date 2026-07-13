@@ -69,6 +69,11 @@ th{color:var(--muted);font-weight:600;font-size:12px;}
         <label for="nama">Nama Member</label>
         <input type="text" id="nama" placeholder="Nama member" required>
       </div>
+      <div id="memberStatus" class="msg" style="margin-bottom:10px;"></div>
+      <div class="field">
+        <label for="nowa">No. WA (opsional)</label>
+        <input type="text" id="nowa" inputmode="numeric" placeholder="08xxxxxxxxxx" maxlength="15">
+      </div>
       <div class="row2">
         <div class="field">
           <label for="paket">Paket</label>
@@ -172,6 +177,26 @@ function autoSlash(el) {
 autoSlash(tanggal);
 autoSlash(document.getElementById('filterTanggal'));
 
+// ----- Cek member -----
+let cekTimeout;
+document.getElementById('nama').addEventListener('input', () => {
+  clearTimeout(cekTimeout);
+  const nama = document.getElementById('nama').value.trim();
+  const el = document.getElementById('memberStatus');
+  if (nama.length < 2) { el.textContent = ''; el.className = 'msg'; return; }
+  cekTimeout = setTimeout(() => {
+    fetch(API + '?token=' + encodeURIComponent(TOKEN) + '&action=cekMember&nama=' + encodeURIComponent(nama))
+      .then(r => r.json())
+      .then(res => {
+        if (!res.ada) { el.innerHTML = '🆕 Member baru'; el.className = 'msg'; }
+        else {
+          el.innerHTML = (res.status === 'Aktif' ? '✅ Aktif s/d ' : '❌ Expired ') + esc(fmtTgl(res.tglExpired));
+          el.className = res.status === 'Aktif' ? 'msg ok' : 'msg err';
+        }
+      }).catch(() => {});
+  }, 400);
+});
+
 const formMsg = document.getElementById('formMsg');
 document.getElementById('saveBtn').addEventListener('click', () => {
   const btn = document.getElementById('saveBtn');
@@ -187,6 +212,7 @@ document.getElementById('saveBtn').addEventListener('click', () => {
     token: TOKEN,
     action: 'add',
     nama: nama,
+    nowa: document.getElementById('nowa').value.trim(),
     paket: paket.value,
     nominal: nominal.value || '0',
     metode: document.getElementById('metode').value,
@@ -206,7 +232,9 @@ document.getElementById('saveBtn').addEventListener('click', () => {
 
 function resetForm() {
   document.getElementById('nama').value = '';
+  document.getElementById('nowa').value = '';
   document.getElementById('catatan').value = '';
+  document.getElementById('memberStatus').textContent = '';
   nominal.value = paketNominal[paket.value];
   tanggal.value = todayDDMMYYYY();
 }
@@ -235,7 +263,8 @@ function loadHistory() {
       historyBody.innerHTML = shown.map(r => {
         const nom = Number(r.nominal || 0);
     return '<tr><td>' + esc(fmtTgl(r.tanggal)) + '</td><td>' + esc(fmtJam(r.waktu)) + '</td><td>' + esc(r.nama) + '</td><td>' + esc(r.paket) +
-          '</td><td>' + (r.id ? '<button class="del-btn" data-id="' + esc(r.id) + '">Hapus</button>' : '') + '</td></tr>';
+      '</td><td>Rp ' + nom.toLocaleString('id-ID') + '</td><td>' + esc(r.metode) + '</td><td>' + esc(r.catatan) +
+      '</td><td>' + (r.id ? '<button class="del-btn" data-id="' + esc(r.id) + '">Hapus</button>' : '') + '</td></tr>';
       }).join('');
       const total = shown.reduce((s, r) => s + Number(r.nominal || 0), 0);
       totalLine.textContent = 'Total' + (f ? ' (' + f + ')' : '') + ': Rp ' + total.toLocaleString('id-ID');
