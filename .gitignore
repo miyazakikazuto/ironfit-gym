@@ -1,0 +1,8 @@
+.vercel
+.env*
+
+# Nested repos (punya remote & CI sendiri)
+gym-tracker/
+meridian/
+IDX-UI/
+xauusd-journal/
