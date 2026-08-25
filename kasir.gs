@@ -1,4 +1,4 @@
-// kasir.gs — Google Apps Script untuk IronFit Kasir
+// kasir.gs — Google Apps Script untuk Gym Kasir
 // Cara pakai:
 // 1. Buat Google Spreadsheet, buat 2 sheet:
 //    "Transaksi" (header: Waktu | Nama | Paket | Nominal | Metode | Tanggal | Catatan | ID)
