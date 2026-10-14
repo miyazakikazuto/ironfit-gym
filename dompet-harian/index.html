@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16161a">
+<title>Dompet Harian</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#0f0f12; --panel:#16161a; --panel-2:#1c1c22; --text:#f0f0f5; --muted:#9aa3b2;
+  --accent:#7c3aed; --accent-2:#a855f7; --ok:#2dd4a8; --warn:#fbbf24; --bad:#ff6b6b;
+  --border:#27272f; --font:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;}
+.navbar{display:flex;align-items:center;gap:10px;padding:14px 20px;background:rgba(22,22,26,.92);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.navbar .logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));font-size:18px;}
+.navbar h1{font-size:18px;font-weight:800;}
+.tabs{display:flex;gap:8px;padding:12px 20px 0;max-width:720px;margin:0 auto;}
+.tabs button{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--muted);font-weight:700;cursor:pointer;font-family:var(--font);font-size:13px;}
+.tabs button.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent;}
+.wrap{max-width:720px;margin:0 auto;padding:16px 20px 40px;}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;}
+.card h2{font-size:16px;margin-bottom:12px;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
+.field input,.field textarea{width:100%;padding:12px 14px;background:var(--panel-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;font-family:var(--font);}
+.row2{display:flex;gap:12px;}
+.row2 .field{flex:1;}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);}
+.btn:active{transform:translateY(1px);}
+.btn.ghost{background:var(--panel-2);border:1px solid var(--border);}
+.btnrow{display:flex;gap:10px;}
+.btnrow .btn{margin:0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--border);vertical-align:top;}
+th{color:var(--muted);font-weight:600;font-size:12px;}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.muted{color:var(--muted);font-size:13px;}
+.big{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;}
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+.pill.ok{background:rgba(45,212,168,.15);color:var(--ok);}
+.pill.warn{background:rgba(251,191,36,.15);color:var(--warn);}
+.pill.bad{background:rgba(255,107,107,.15);color:var(--bad);}
+.msg{font-size:13px;min-height:18px;margin-top:8px;}
+.msg.ok{color:var(--ok);}
+.msg.err{color:var(--bad);}
+.banner{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.4);border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:16px;display:none;}
+.kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.kv:last-child{border-bottom:none;}
+.kv .v{font-weight:700;font-variant-numeric:tabular-nums;}
+.del-btn{padding:5px 9px;border:none;border-radius:8px;background:#3a1d1d;color:#ff6b6b;font-size:12px;cursor:pointer;}
+.hide{display:none!important;}
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="logo">👛</div><h1>Dompet Harian</h1></nav>
+<div class="tabs">
+  <button data-tab="dash" class="active">Dashboard</button>
+  <button data-tab="input">Input</button>
+  <button data-tab="riwayat">Riwayat</button>
+  <button data-tab="atur">Pengaturan</button>
+</div>
+<div class="wrap">
+  <div id="backupBanner" class="banner">⚠️ Belum pernah backup. Buka tab Pengaturan → Export, simpan file-nya di HP + Drive.</div>
+
+  <section id="tab-dash">
+    <div class="card">
+      <h2>Kebutuhan <span id="stKeb" class="pill ok">Aman</span></h2>
+      <div class="big" id="sisaKeb">Rp0</div>
+      <div class="muted" id="subKeb">—</div>
+      <div class="kv"><span>Boleh dipakai / hari</span><span class="v" id="bolehKeb">Rp0</span></div>
+      <div class="kv"><span>Sisa hari (s/d <span id="endKeb">—</span>)</span><span class="v" id="hariKeb">0</span></div>
+      <div class="kv"><span>Belanja kemarin</span><span class="v" id="belanjaKeb">Rp0</span></div>
+    </div>
+    <div class="card">
+      <h2>Dating <span id="stDat" class="pill ok">Aman</span></h2>
+      <div class="big" id="sisaDat">Rp0</div>
+      <div class="muted" id="subDat">—</div>
+      <div class="kv"><span>Boleh dipakai / hari</span><span class="v" id="bolehDat">Rp0</span></div>
+      <div class="kv"><span>Sisa hari (s/d <span id="endDat">—</span>)</span><span class="v" id="hariDat">0</span></div>
+      <div class="kv"><span>Belanja kemarin</span><span class="v" id="belanjaDat">Rp0</span></div>
+    </div>
+    <div class="card">
+      <h2>Ringkasan per periode</h2>
+      <div id="ringkasan"></div>
+    </div>
+  </section>
+
+  <section id="tab-input" class="hide">
+    <div class="card">
+      <h2>Input malam ini</h2>
+      <div class="field"><label for="fDate">Tanggal</label><input type="date" id="fDate"></div>
+      <div class="row2">
+        <div class="field"><label for="fKebBank">Kebutuhan · Bank</label><input type="number" id="fKebBank" min="0" step="1" inputmode="numeric"></div>
+        <div class="field"><label for="fKebCash">Kebutuhan · Cash</label><input type="number" id="fKebCash" min="0" step="1" inputmode="numeric"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="fDatBank">Dating · Bank</label><input type="number" id="fDatBank" min="0" step="1" inputmode="numeric"></div>
+        <div class="field"><label for="fDatCash">Dating · Cash</label><input type="number" id="fDatCash" min="0" step="1" inputmode="numeric"></div>
+      </div>
+      <div class="field"><label for="fNote">Catatan (opsional)</label><input type="text" id="fNote" placeholder="misal: bensin, makan"></div>
+      <button class="btn" id="btnSave">Simpan</button>
+      <div id="saveMsg" class="msg"></div>
+      <p class="muted" style="margin-top:10px">Rumus: belanja = total kemarin − total hari ini (bank+cash). Tarik cash tidak dihitung belanja. Total naik = uang masuk otomatis.</p>
+    </div>
+  </section>
+
+  <section id="tab-riwayat" class="hide">
+    <div class="card">
+      <h2>Riwayat belanja</h2>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Tgl</th><th class="num">Kebutuhan</th><th class="num">Dating</th><th></th></tr></thead>
+        <tbody id="riwayatBody"></tbody>
+      </table></div>
+      <p class="muted" style="margin-top:8px">Klik tanggal untuk koreksi (dimuat ke form Input). Nilai minus = uang masuk.</p>
+    </div>
+  </section>
+
+  <section id="tab-atur" class="hide">
+    <div class="card">
+      <h2>Periode & budget</h2>
+      <div class="row2">
+        <div class="field"><label for="sStart">Mulai periode</label><input type="date" id="sStart"></div>
+        <div class="field"><label for="sEnd">Akhir periode</label><input type="date" id="sEnd"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="sBudgetKeb">Budget kebutuhan (Rp)</label><input type="number" id="sBudgetKeb" min="0" step="1000"></div>
+        <div class="field"><label for="sBudgetDat">Budget dating / bulan (Rp)</label><input type="number" id="sBudgetDat" min="0" step="1000"></div>
+      </div>
+      <div class="field"><label for="sDatEnd">Akhir bulan dating (s/d)</label><input type="date" id="sDatEnd"></div>
+      <button class="btn" id="btnSettings">Simpan pengaturan</button>
+      <div id="setMsg" class="msg"></div>
+    </div>
+    <div class="card">
+      <h2>Backup data</h2>
+      <div class="btnrow">
+        <button class="btn ghost" id="btnExport">⬇ Export JSON</button>
+        <button class="btn ghost" id="btnImport">⬆ Import JSON</button>
+      </div>
+      <input type="file" id="fileImport" accept="application/json" class="hide">
+      <div id="bakMsg" class="msg"></div>
+      <p class="muted" style="margin-top:8px" id="lastBak">Backup terakhir: belum pernah</p>
+    </div>
+    <div class="card">
+      <h2>Zona berbahaya</h2>
+      <button class="btn ghost" id="btnReset" style="color:var(--bad)">Hapus semua data</button>
+    </div>
+  </section>
+</div>
+
+<script>
+'use strict';
+/* ===== Pure logic (tanpa DOM — bisa diuji via node) ===== */
+const LS_KEY = 'dompet-harian-v1';
+
+function defaultData() {
+  return {
+    settings: {
+      periodStart: '2026-10-15',
+      periodEnd: '2026-10-28',
+      budgetKeb: 350000,
+      budgetDat: 200000,
+      datingMonthStart: '2026-09-28',
+      datingMonthEnd: '2026-10-28',
+      prevPeriods: [
+        { name: '28–14', start: '2026-09-28', end: '2026-10-14', budgetKeb: 450000 }
+      ]
+    },
+    snapshots: [
+      { date: '2026-10-14', kebBank: 350107, kebCash: 45000, datBank: 35230, datCash: 0, note: 'titik awal' }
+    ],
+    lastBackup: null
+  };
+}
+
+function totalKeb(s) { return (s.kebBank || 0) + (s.kebCash || 0); }
+function totalDat(s) { return (s.datBank || 0) + (s.datCash || 0); }
+
+/** jumlah hari KALENDER dari dateA (eksklusif) ke dateB (inklusif). Negatif → 0 */
+function daysLeft(fromISO, toISO) {
+  const ms = Date.parse(toISO + 'T00:00:00') - Date.parse(fromISO + 'T00:00:00');
+  return Math.max(0, Math.round(ms / 86400000));
+}
+function totalDays(startISO, endISO) { // inklusif-inklusif
+  return daysLeft(startISO, endISO) + 1;
+}
+
+function sortSnaps(snaps) { return snaps.slice().sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0); }
+
+/** belanja per langkah: positif = keluar, negatif = uang masuk */
+function dailyFlow(snaps) {
+  const s = sortSnaps(snaps);
+  const out = [];
+  for (let i = 1; i < s.length; i++) {
+    out.push({
+      date: s[i].date,
+      keb: totalKeb(s[i - 1]) - totalKeb(s[i]),
+      dat: totalDat(s[i - 1]) - totalDat(s[i]),
+      note: s[i].note || ''
+    });
+  }
+  return out;
+}
+
+function summarize(snaps, startISO, endISO) {
+  const inRange = sortSnaps(snaps).filter(x => x.date >= startISO && x.date <= endISO);
+  if (inRange.length === 0) return null;
+  const spentKeb = totalKeb(inRange[0]) - totalKeb(inRange[inRange.length - 1]);
+  const spentDat = totalDat(inRange[0]) - totalDat(inRange[inRange.length - 1]);
+  let inKeb = 0, inDat = 0;
+  for (let i = 1; i < inRange.length; i++) {
+    inKeb += Math.max(0, totalKeb(inRange[i]) - totalKeb(inRange[i - 1]));
+    inDat += Math.max(0, totalDat(inRange[i]) - totalDat(inRange[i - 1]));
+  }
+  const days = Math.max(1, inRange.length - 1);
+  return { n: inRange.length, spentKeb, spentDat, inKeb, inDat, avgKeb: spentKeb / days, avgDat: spentDat / days };
+}
+
+/** status Aman/Kurang: sisa cukup untuk laju awal sampai akhir? */
+function statusFor(sisa, budget, pStart, pEnd, refDate) {
+  const tDays = totalDays(pStart, pEnd);
+  const awal = budget / tDays;
+  const left = daysLeft(refDate, pEnd);
+  if (left === 0) return sisa >= 0 ? 'Aman' : 'Kurang';
+  return sisa >= awal * left ? 'Aman' : 'Kurang';
+}
+function bolehPerHari(sisa, refDate, endISO) {
+  const left = daysLeft(refDate, endISO);
+  if (left === 0) return sisa;
+  return sisa / left;
+}
+
+function validateSnapshot(o) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(o.date || '')) return 'Tanggal tidak valid.';
+  for (const k of ['kebBank', 'kebCash', 'datBank', 'datCash']) {
+    if (!Number.isFinite(o[k]) || o[k] < 0) return 'Semua nominal harus angka ≥ 0.';
+  }
+  return null;
+}
+
+/* ===== Store (localStorage + fallback memori utk testing) ===== */
+const memStore = {};
+const storage = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return Object.prototype.hasOwnProperty.call(memStore, k) ? memStore[k] : null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) { memStore[k] = v; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { delete memStore[k]; } }
+};
+
+function loadData() {
+  try {
+    const raw = storage.get(LS_KEY);
+    if (!raw) { const d = defaultData(); storage.set(LS_KEY, JSON.stringify(d)); return d; }
+    const d = JSON.parse(raw);
+    if (!d.settings || !Array.isArray(d.snapshots)) throw new Error('bad shape');
+    return d;
+  } catch (e) {
+    const d = defaultData();
+    storage.set(LS_KEY, JSON.stringify(d));
+    return d;
+  }
+}
+function saveData(d) { storage.set(LS_KEY, JSON.stringify(d)); }
+
+function upsertSnapshot(d, snap) {
+  const err = validateSnapshot(snap);
+  if (err) return err;
+  const i = d.snapshots.findIndex(x => x.date === snap.date);
+  if (i >= 0) d.snapshots[i] = snap; else d.snapshots.push(snap);
+  d.snapshots = sortSnaps(d.snapshots);
+  saveData(d);
+  return null;
+}
+
+/* ===== UI (browser saja) ===== */
+if (typeof document !== 'undefined') {
+  const fmtRp = n => 'Rp' + Math.round(n).toLocaleString('id-ID');
+  const fmtTgl = iso => { const [y, m, dd] = iso.split('-'); return dd + '/' + m + '/' + y.slice(2); };
+  const $ = id => document.getElementById(id);
+  let DB = loadData();
+
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    ['dash', 'input', 'riwayat', 'atur'].forEach(t => $('tab-' + t).classList.toggle('hide', t !== b.dataset.tab));
+  }));
+
+  function pill(el, st) {
+    el.textContent = st;
+    el.className = 'pill ' + (st === 'Aman' ? 'ok' : st === 'Hati-hati' ? 'warn' : 'bad');
+  }
+
+  function render() {
+    DB = loadData();
+    const st = DB.settings;
+    const snaps = sortSnaps(DB.snapshots);
+    const last = snaps[snaps.length - 1];
+    const flow = dailyFlow(snaps);
+    const y = flow[flow.length - 1];
+
+    // Kebutuhan
+    const sisaK = totalKeb(last);
+    $('sisaKeb').textContent = fmtRp(sisaK);
+    $('subKeb').textContent = 'bank ' + fmtRp(last.kebBank) + ' + cash ' + fmtRp(last.kebCash);
+    $('bolehKeb').textContent = fmtRp(bolehPerHari(sisaK, last.date, st.periodEnd));
+    $('hariKeb').textContent = daysLeft(last.date, st.periodEnd) + ' hari';
+    $('endKeb').textContent = fmtTgl(st.periodEnd);
+    $('belanjaKeb').textContent = y ? fmtRp(y.keb) : '—';
+    pill($('stKeb'), snaps.length < 1 ? 'Aman' : statusFor(sisaK, st.budgetKeb, st.periodStart, st.periodEnd, last.date));
+
+    // Dating
+    const sisaD = totalDat(last);
+    $('sisaDat').textContent = fmtRp(sisaD);
+    $('subDat').textContent = 'bank ' + fmtRp(last.datBank) + ' + cash ' + fmtRp(last.datCash);
+    $('bolehDat').textContent = fmtRp(bolehPerHari(sisaD, last.date, st.datingMonthEnd));
+    $('hariDat').textContent = daysLeft(last.date, st.datingMonthEnd) + ' hari';
+    $('endDat').textContent = fmtTgl(st.datingMonthEnd);
+    $('belanjaDat').textContent = y ? fmtRp(y.dat) : '—';
+    pill($('stDat'), statusFor(sisaD, st.budgetDat, st.datingMonthStart, st.datingMonthEnd, last.date));
+
+    // Ringkasan
+    const periods = st.prevPeriods.concat([{ name: fmtTgl(st.periodStart) + '–' + fmtTgl(st.periodEnd), start: st.periodStart, end: st.periodEnd, budgetKeb: st.budgetKeb }]);
+    $('ringkasan').innerHTML = periods.map(p => {
+      const s = summarize(snaps, p.start, p.end);
+      if (!s) return '<div class="kv"><span>' + p.name + '</span><span class="v muted">belum ada data</span></div>';
+      return '<div class="kv"><span>' + p.name + ' <span class="muted">(' + s.n + ' catat)</span></span>' +
+        '<span class="v">K ' + fmtRp(s.spentKeb) + ' · D ' + fmtRp(s.spentDat) + '</span></div>' +
+        '<div class="muted" style="margin:-2px 0 6px">rata2/hari K ' + fmtRp(s.avgKeb) + ' · D ' + fmtRp(s.avgDat) +
+        (s.inKeb > 0 || s.inDat > 0 ? ' · masuk K ' + fmtRp(s.inKeb) + ' D ' + fmtRp(s.inDat) : '') + '</div>';
+    }).join('');
+
+    // Riwayat (terbaru dulu)
+    $('riwayatBody').innerHTML = flow.slice().reverse().map(f =>
+      '<tr><td><a href="#" data-date="' + f.date + '" style="color:inherit">' + fmtTgl(f.date) + '</a>' +
+      (f.note ? '<div class="muted">' + escapeHtml(f.note) + '</div>' : '') + '</td>' +
+      '<td class="num">' + fmtSigned(f.keb) + '</td><td class="num">' + fmtSigned(f.dat) + '</td>' +
+      '<td><button class="del-btn" data-del="' + f.date + '">hapus</button></td></tr>'
+    ).join('') || '<tr><td colspan="4" class="muted">Belum ada belanja tercatat. Isi minimal 2 malam berurutan.</td></tr>';
+
+    $('riwayatBody').querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
+      if (!confirm('Hapus catatan ' + b.dataset.del + '?')) return;
+      DB.snapshots = DB.snapshots.filter(x => x.date !== b.dataset.del);
+      saveData(DB); render();
+    }));
+    $('riwayatBody').querySelectorAll('[data-date]').forEach(a => a.addEventListener('click', ev => {
+      ev.preventDefault();
+      const s = DB.snapshots.find(x => x.date === a.dataset.date);
+      if (!s) return;
+      prefill(s);
+      document.querySelector('[data-tab="input"]').click();
+    }));
+
+    // Banner backup
+    const needBak = !DB.lastBackup || (Date.now() - Date.parse(DB.lastBackup) > 7 * 86400000);
+    $('backupBanner').style.display = (needBak && snaps.length >= 2) ? 'block' : 'none';
+    $('lastBak').textContent = 'Backup terakhir: ' + (DB.lastBackup ? DB.lastBackup.slice(0, 10) : 'belum pernah');
+
+    // Prefill form dari terakhir
+    if (!$('fDate').value) prefill(last, true);
+  }
+
+  function fmtSigned(n) { return (n < 0 ? '−' : '') + 'Rp' + Math.abs(Math.round(n)).toLocaleString('id-ID'); }
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+  function prefill(s, today) {
+    $('fDate').value = today ? new Date().toISOString().slice(0, 10) : s.date;
+    $('fKebBank').value = s.kebBank; $('fKebCash').value = s.kebCash;
+    $('fDatBank').value = s.datBank; $('fDatCash').value = s.datCash;
+    $('fNote').value = today ? '' : (s.note || '');
+  }
+
+  $('btnSave').addEventListener('click', () => {
+    const snap = {
+      date: $('fDate').value,
+      kebBank: Number($('fKebBank').value), kebCash: Number($('fKebCash').value),
+      datBank: Number($('fDatBank').value), datCash: Number($('fDatCash').value),
+      note: $('fNote').value.trim()
+    };
+    const existed = DB.snapshots.some(x => x.date === snap.date);
+    if (existed && !confirm('Tanggal ' + snap.date + ' sudah ada. Timpa?')) return;
+    const err = upsertSnapshot(DB, snap);
+    const m = $('saveMsg');
+    if (err) { m.textContent = err; m.className = 'msg err'; return; }
+    m.textContent = 'Tersimpan ✓'; m.className = 'msg ok';
+    render();
+  });
+
+  // Settings form
+  $('sStart').value = DB.settings.periodStart; $('sEnd').value = DB.settings.periodEnd;
+  $('sBudgetKeb').value = DB.settings.budgetKeb; $('sBudgetDat').value = DB.settings.budgetDat;
+  $('sDatEnd').value = DB.settings.datingMonthEnd;
+  $('btnSettings').addEventListener('click', () => {
+    const st = DB.settings;
+    if ($('sStart').value > $('sEnd').value) { $('setMsg').textContent = 'Mulai harus ≤ akhir.'; $('setMsg').className = 'msg err'; return; }
+    // arsipkan periode lama bila berganti
+    if (st.periodStart !== $('sStart').value || st.periodEnd !== $('sEnd').value) {
+      st.prevPeriods.push({ name: fmtTgl(st.periodStart) + '–' + fmtTgl(st.periodEnd), start: st.periodStart, end: st.periodEnd, budgetKeb: st.budgetKeb });
+    }
+    st.periodStart = $('sStart').value; st.periodEnd = $('sEnd').value;
+    st.budgetKeb = Math.max(0, Number($('sBudgetKeb').value) || 0);
+    st.budgetDat = Math.max(0, Number($('sBudgetDat').value) || 0);
+    st.datingMonthEnd = $('sDatEnd').value;
+    saveData(DB); render();
+    $('setMsg').textContent = 'Pengaturan tersimpan ✓'; $('setMsg').className = 'msg ok';
+  });
+
+  $('btnExport').addEventListener('click', () => {
+    DB.lastBackup = new Date().toISOString();
+    saveData(DB);
+    const blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'dompet-harian-backup.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    render();
+  });
+  $('btnImport').addEventListener('click', () => $('fileImport').click());
+  $('fileImport').addEventListener('change', () => {
+    const f = $('fileImport').files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const d = JSON.parse(r.result);
+        if (!d.settings || !Array.isArray(d.snapshots)) throw new Error('shape');
+        DB = d; saveData(DB); render();
+        $('bakMsg').textContent = 'Import berhasil ✓ (' + d.snapshots.length + ' catatan)'; $('bakMsg').className = 'msg ok';
+      } catch (e) { $('bakMsg').textContent = 'File tidak valid.'; $('bakMsg').className = 'msg err'; }
+    };
+    r.readAsText(f);
+    $('fileImport').value = '';
+  });
+  $('btnReset').addEventListener('click', () => {
+    if (!confirm('Hapus SEMUA data? Export dulu kalau belum backup!')) return;
+    if (!confirm('Yakin? Tidak bisa dibatalkan.')) return;
+    storage.del(LS_KEY); render();
+  });
+
+  render();
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(() => {}); }
+}
+
+/* ===== Export utk node test ===== */
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { defaultData, totalKeb, totalDat, daysLeft, totalDays, sortSnaps, dailyFlow, summarize, statusFor, bolehPerHari, validateSnapshot, upsertSnapshot, loadData, saveData, storage, LS_KEY };
+}
