@@ -63,6 +63,8 @@ th{color:var(--muted);font-weight:600;font-size:12px;}
   <button data-tab="atur">Pengaturan</button>
 </div>
 <div class="wrap">
+  <noscript><div class="banner" style="display:block">⚠️ JavaScript mati di browser ini. Dompet Harian butuh JavaScript — aktifkan dulu, atau buka di Chrome HP.</div></noscript>
+  <div id="jsWarn" class="banner" style="display:block">⏳ Memuat… kalau pesan ini tidak hilang dalam 3 detik, JavaScript diblokir browser ini (coba Chrome asli / tab Incognito).</div>
   <div id="backupBanner" class="banner">⚠️ Belum pernah backup. Buka tab Pengaturan → Export, simpan file-nya di HP + Drive.</div>
 
   <section id="tab-dash">
@@ -439,6 +441,8 @@ if (typeof document !== 'undefined') {
   });
 
   render();
+  var jw = document.getElementById('jsWarn');
+  if (jw) jw.style.display = 'none';
   if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(() => {}); }
 }
 
